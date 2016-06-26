@@ -23,7 +23,7 @@ class StaticSiteScraper:
     :param str website: 网页地址
     :return: 无返回值
     """
-    def __init__(self,website=None,label=None,proxy=None):
+    def __init__(self,website=None,label=None,proxy=None,pages=None):
         # 设置网站地址
         self.website = website
 
@@ -32,6 +32,7 @@ class StaticSiteScraper:
         self.db.connect('cache','scraper')
 
         # 设置网页地址集合
+        self.mongo_pages = pages
         self.pages = set()
 
         # 设置标示
@@ -39,6 +40,7 @@ class StaticSiteScraper:
 
         # 设置代理服务器
         if proxy is not None:
+            print(proxy)
             self.proxies = {'http': ''.join(['http://',proxy])}
         else:
             self.proxies = None
@@ -72,6 +74,7 @@ class StaticSiteScraper:
         :return: 无返回值
         """
         url = urljoin(self.website,page_url)
+        print(url)
         try:
             html = requests.get(url=url,timeout=30).content
         except requests.exceptions.RequestException as e:
@@ -80,9 +83,10 @@ class StaticSiteScraper:
 
         # 储存数据到MongoDB数据库
         if cache:
-            self.db.collection.insert_one({'webaddress':url,
-                                           'content':html,
-                                           'label':self.label})
+            if url not in self.mongo_pages:
+                self.db.collection.insert_one({'webaddress':url,
+                                               'content':html,
+                                               'label':self.label})
 
         bsobj = BeautifulSoup(html, "lxml")
 

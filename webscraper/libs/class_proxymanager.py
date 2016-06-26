@@ -90,7 +90,7 @@ class ProxyManager:
 
         for key in self.__checked_proxy_list:
             self.db.collection.find_one_and_update({'proxy':key},
-                                                   {'$inc': {'count': self.__checked_proxy_list[key]}})
+                                                   {'$set': {'count': self.__checked_proxy_list[key]}})
 
     def update_proxy_db(self):
         """ 更新代理服务器数据库列表
@@ -128,7 +128,7 @@ if __name__ == '__main__':
                  'http://www.dgtle.com/portal.php']
 
     pmanager = ProxyManager()
-    #pmanager.check_and_store(check_websites=web_list)
-    #pmanager.update_proxy_db()
+    pmanager.check_and_store(check_websites=web_list)
+    pmanager.update_proxy_db()
     print(pmanager.proxy)
     print(pmanager.random_proxy)

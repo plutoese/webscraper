@@ -27,11 +27,27 @@ class HtmlParser:
         self.html_content = html_content
         self.bs_obj = BeautifulSoup(self.html_content, "lxml")
 
+    def table(self,css=None):
+        """ 返回表格的数据
+
+        :param css: table的css选择器
+        :return: 表格的列表
+        """
+        table = []
+        if css is not None:
+            tds = self.bs_obj.select(''.join([css,' > tr']))
+
+        for item in tds:
+            table.append([re.sub('\s+','',unit.text) for unit in item.select('td')])
+
+        return table
 
 if __name__ == '__main__':
     db = MongoDB()
     db.connect('cache','scraper')
-    html = list(db.collection.find())[0]['content']
+    html = list(db.collection.find())[2]['content']
 
     htmlparser = HtmlParser(html_content=html)
+    #print(htmlparser.bs_obj.select('.b > tr'))
+    print(htmlparser.table('.b'))
 
