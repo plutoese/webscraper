@@ -9,6 +9,7 @@
 # @date: 2016.06.26
 # --------------------------------------------------------------
 
+import sys
 from libs.class_mongodb import MongoDB
 from libs.class_proxymanager import ProxyManager
 from libs.class_staticsitescraper import StaticSiteScraper
@@ -17,6 +18,9 @@ from libs.class_staticsitescraper import StaticSiteScraper
 # 1.1 设置代理服务器
 pmanager = ProxyManager()
 ramdomproxy = pmanager.random_proxy
+
+# 设置递归深度
+sys.setrecursionlimit(1000000)
 
 # 1.2 设置网页爬虫
 db = MongoDB()
