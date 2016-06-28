@@ -3,13 +3,14 @@
 # --------------------------------------------------------------
 # class_headlessbrowser文件
 # @class: HeadlessBrowser类
-# @introduction: HeadlessBrowser类用PhantomJS来执行网站动作和数据抓取
+# @introduction: HeadlessBrowser类用PhantomJS或firefox来执行网站动作和数据抓取
 # @dependency: selenium包
 # @author: plutoese
-# @date: 2016.06.27
+# @date: 2016.06.28
 # --------------------------------------------------------------
 
 import time
+from datetime import datetime
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.common.exceptions import TimeoutException
@@ -22,20 +23,20 @@ import random
 
 
 class HeadlessBrowser:
-    """ HeadlessBrowser类用PhantomJS来执行网站动作和数据抓取
+    """ HeadlessBrowser类用PhantomJS或firefox来执行网站动作和数据抓取
 
     :param str proxy: proxy的地址，形式如'58.20.128.123:80'
     :return: 无返回值
     """
-    def __init__(self,proxy=None,timeout=0,type=0):
+    def __init__(self,proxy=None,proxy_type='http',timeout=0,type=0):
         # 设置代理服务器
         if proxy is not None:
-            print(proxy)
+            print('proxy: ',proxy,', proxy type: ',proxy_type)
+            # 如果type=0，则用PhantomJS，若type=1，则用firefox
             if type < 1:
-                service_args = [''.join(['--proxy=',proxy]),'--proxy-type=https']
-                self.browser = webdriver.PhantomJS(executable_path="D:\\tools\\phantomjs\\bin\\phantomjs.exe",
-                                             service_args=service_args)
-            elif type < 2:
+                service_args = [''.join(['--proxy=',proxy]),''.join(['--proxy-type=',proxy_type])]
+                self.browser = webdriver.PhantomJS(executable_path="D:\\tools\\phantomjs\\bin\\phantomjs.exe",service_args=service_args)
+            else:
                 self.__proxy = Proxy({'proxyType':ProxyType.MANUAL,
                                       'httpProxy':proxy,
                                       'httpsProxy':proxy,
@@ -43,19 +44,18 @@ class HeadlessBrowser:
                                       'sslProxy':proxy,
                                       'noProxy':''})
                 self.browser = webdriver.Firefox(proxy=self.__proxy)
-            else:
-                self.browser = webdriver.Chrome(r'C:\Users\glen\AppData\Local\Google\Chrome\Application\chrome.exe')
         else:
             if type < 1:
                 self.browser = webdriver.PhantomJS(executable_path="D:\\tools\\phantomjs\\bin\\phantomjs.exe")
-            elif type < 2:
-                self.browser = webdriver.Firefox()
             else:
-                self.browser = webdriver.Chrome(r'C:\Users\glen\AppData\Local\Google\Chrome\Application\chrome.exe')
+                self.browser = webdriver.Firefox()
 
-        # 最大化浏览器
+        # 等待
         if timeout > 0:
             self.browser.implicitly_wait(timeout)
+        # 设置get的timeout
+        self.browser.set_page_load_timeout(30)
+        # 最大化浏览器
         self.browser.maximize_window()
         self.pages = dict()
         self.current_window_handle = None
@@ -68,8 +68,13 @@ class HeadlessBrowser:
         :param int time_out: 超时设置
         :return: 无返回值
         """
-        self.browser.get(website)
-        print('...........')
+        print('Starting load ',website)
+        try:
+            self.browser.get(website)
+        except Exception:
+            return False
+
+        print('Loading......')
         if ready_check is not None:
             if self.is_ready(locator=ready_check):
                 self.pages[self.browser.current_window_handle] = {'url':self.browser.current_url,
@@ -77,10 +82,12 @@ class HeadlessBrowser:
                                                                   'parent':None}
                 self.current_window_handle = self.browser.current_window_handle
                 self.window_handles = set(self.browser.window_handles)
+                return True
             else:
                 print('Not Ready')
+                return False
 
-    def is_ready(self,locator,timeout=120):
+    def is_ready(self,locator,timeout=20):
         """ 验证页面是否载入完成
 
         :param locator: 页面完成检验标志
@@ -89,9 +96,12 @@ class HeadlessBrowser:
         :rtype: bool
         """
         try:
+            print('Test Ready...')
             WebDriverWait(self.browser,timeout).until(expected_conditions.visibility_of_element_located(locator))
+            print('Test Done...')
             return True
         except TimeoutException:
+            print('TimeOut!')
             return False
 
     def locate(self,css_selector=None,id=None,xpath=None,link_text=None):
@@ -113,7 +123,7 @@ class HeadlessBrowser:
         if link_text is not None:
             return self.browser.find_element_by_link_text(link_text)
 
-    def get_text(self,location,beautiful=True):
+    def get_text(self,location,beautiful=False):
         """ 返回文本
 
         :param str,selenium.webdriver.remote.webelement.WebElement location: 网页定位
@@ -198,9 +208,10 @@ class HeadlessBrowser:
 if __name__ == '__main__':
     pmanager = ProxyManager()
     proxy = random.choice(pmanager.best_speed_proxies)
-    browser = HeadlessBrowser(proxy=proxy,timeout=5,type=1)
+    browser = HeadlessBrowser(proxy=proxy,proxy_type='https',timeout=5,type=0)
     browser.surf('https://www.hqms.org.cn/usp/roster/index.jsp',
                  ready_check=(By.CSS_SELECTOR,'.table_result'))
+    print('I am starting Action!')
     browser.interact_one_time(location='.province_select',select_text='河北省')
     browser.interact_one_time(location='#btn_search',click=True)
     time.sleep(10)
