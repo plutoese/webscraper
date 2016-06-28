@@ -28,6 +28,14 @@ db.connect('application','hospital')
 # 解析数据和储存进入MongoDB数据库
 for apage in html_files:
     content = apage['content']
-    print(content)
+    rows = re.split('\n',content)
+    vars = re.split('\s+',rows[0])
+    region = re.split('（',re.split('\s+',rows[1])[0])[0]
+    for cols in rows[2:]:
+        record = {'region':region}
+        record.update(dict(zip(vars,re.split('\s+',cols))))
+        print(record)
+        db.collection.insert_one(record)
+
 
 
