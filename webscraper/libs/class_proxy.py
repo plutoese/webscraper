@@ -12,7 +12,7 @@
 import re
 from bs4 import BeautifulSoup
 from urllib import request
-
+import requests
 
 class Proxy:
     """ Proxy类用来处理代理服务器
@@ -48,13 +48,19 @@ class Proxy:
         :rtype: bool
         """
         try:
-            proxy_handler = request.ProxyHandler({self.__type: self.__full_address})
-            opener = request.build_opener(proxy_handler)
-            opener.addheaders = [('User-agent', 'Mozilla/5.0')]
-            request.install_opener(opener)
-            req = request.Request(check_address)
-            web = request.urlopen(req,timeout=60)
-            bs = BeautifulSoup(web.read(),'lxml')
+            #proxy_handler = request.ProxyHandler({self.__type: self.__full_address})
+            #opener = request.build_opener(proxy_handler)
+            #opener.addheaders = [('User-agent', 'Mozilla/5.0')]
+            #request.install_opener(opener)
+            #req = request.Request(check_address)
+            #web = request.urlopen(req,timeout=10)
+            proxies = {'http':self.__full_address}
+            html = requests.get(url=check_address,proxies=proxies,timeout=10)
+            if html.status_code != requests.codes.ok:
+                print(html.status_code.code)
+                return False
+            #bs = BeautifulSoup(web.read(),'lxml')
+            bs = BeautifulSoup(html.content,'lxml')
             print(bs.title)
         except Exception:
             return False
