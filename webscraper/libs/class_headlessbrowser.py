@@ -208,7 +208,7 @@ class HeadlessBrowser:
 if __name__ == '__main__':
     pmanager = ProxyManager()
     proxy = random.choice(pmanager.best_speed_proxies)
-    browser = HeadlessBrowser(proxy=proxy,proxy_type='https',timeout=5,type=0)
+    browser = HeadlessBrowser(proxy_type='https',timeout=5,type=0)
     browser.surf('https://www.hqms.org.cn/usp/roster/index.jsp',
                  ready_check=(By.CSS_SELECTOR,'.table_result'))
     print('I am starting Action!')

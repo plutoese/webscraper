@@ -15,6 +15,7 @@ import numpy as np
 from libs.class_proxy import Proxy
 from libs.class_mongodb import MongoDB
 from libs.class_multithread import MultiThread
+from selenium.webdriver.common.by import By
 
 
 class ProxyManager:
@@ -29,7 +30,9 @@ class ProxyManager:
 
         # 设置检验代理服务器有效性的网址列表
         self.check_websites = ['http://www.163.com',
-                               'http://www.sina.com.cn']
+                               'http://www.sina.com.cn',
+                               'http://www.zhibo8.cc/',
+                               'http://www.dgtle.com/portal.php']
 
         # 设置代理服务器列表
         if proxy_list is None:
@@ -129,7 +132,6 @@ class ProxyManager:
             self.db.collection.find_one_and_update({'proxy':proxy},
                                                    {'$set': {'count':count,
                                                              'speed': mean_speed}})
-
     @property
     def proxy(self):
         """ 返回代理服务器的字典列表
@@ -148,6 +150,15 @@ class ProxyManager:
         for item in self.proxy:
             result.extend([item['proxy']]*item['count'])
         return random.choice(result)
+
+    @property
+    def checked_proxies(self):
+        """ 返回检查过的代理服务器列表
+
+        :return: 代理服务器列表
+        """
+        result = self.db.collection.find({'checked':1},projection={'_id':0,'proxy':1,'count':1,'speed':1})
+        return [item['proxy'] for item in result]
 
     @property
     def best_speed_proxies(self):
@@ -173,4 +184,5 @@ if __name__ == '__main__':
     #pmanager.speed_for_valuable_proxies()
     #print(pmanager.proxy)
     #print(pmanager.random_proxy)
-    print(pmanager.best_speed_proxies)
+    print(pmanager.checked_proxies)
+    #print(pmanager.best_speed_proxies)

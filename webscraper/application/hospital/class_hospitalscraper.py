@@ -63,7 +63,7 @@ class HospitalScraper:
         """
         while self.regions:
             region = self.regions[0]
-            found = self.db.collection.find_one({'region':region})
+            found = self.db.collection.find_one({'region':region,'label':'hospital'})
             if found is None:
                 self.one_thread(region)
             else:
