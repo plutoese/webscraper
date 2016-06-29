@@ -1,26 +1,12 @@
-[INFO  - 2016-06-28T08:58:41.204Z] GhostDriver - Main - running on port 11688
-[INFO  - 2016-06-28T08:58:44.569Z] Session [84a4d410-3d0e-11e6-a8a8-bb777518e7d4] - page.settings - {"XSSAuditingEnabled":false,"javascriptCanCloseWindows":true,"javascriptCanOpenWindows":true,"javascriptEnabled":true,"loadImages":true,"localToRemoteUrlAccessEnabled":false,"userAgent":"Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/538.1 (KHTML, like Gecko) PhantomJS/2.1.1 Safari/538.1","webSecurityEnabled":true}
-[INFO  - 2016-06-28T08:58:44.569Z] Session [84a4d410-3d0e-11e6-a8a8-bb777518e7d4] - page.customHeaders:  - {}
-[INFO  - 2016-06-28T08:58:44.569Z] Session [84a4d410-3d0e-11e6-a8a8-bb777518e7d4] - Session.negotiatedCapabilities - {"browserName":"phantomjs","version":"2.1.1","driverName":"ghostdriver","driverVersion":"1.2.0","platform":"windows-10-32bit","javascriptEnabled":true,"takesScreenshot":true,"handlesAlerts":false,"databaseEnabled":false,"locationContextEnabled":false,"applicationCacheEnabled":false,"browserConnectionEnabled":false,"cssSelectorsEnabled":true,"webStorageEnabled":false,"rotatable":false,"acceptSslCerts":false,"nativeEvents":true,"proxy":{"proxyType":"direct"}}
-[INFO  - 2016-06-28T08:58:44.569Z] SessionManagerReqHand - _postNewSessionCommand - New Session Created: 84a4d410-3d0e-11e6-a8a8-bb777518e7d4
-[ERROR - 2016-06-28T08:58:49.914Z] WebElementLocator - _handleLocateCommand - Element(s) NOT Found: GAVE UP. Search Stop Time: 1467104329903
+[INFO  - 2016-06-29T08:49:53.923Z] GhostDriver - Main - running on port 13721
+[INFO  - 2016-06-29T08:49:57.157Z] Session [74b1e4d0-3dd6-11e6-bc92-11acacdf373b] - page.settings - {"XSSAuditingEnabled":false,"javascriptCanCloseWindows":true,"javascriptCanOpenWindows":true,"javascriptEnabled":true,"loadImages":true,"localToRemoteUrlAccessEnabled":false,"userAgent":"Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/538.1 (KHTML, like Gecko) PhantomJS/2.1.1 Safari/538.1","webSecurityEnabled":true}
+[INFO  - 2016-06-29T08:49:57.157Z] Session [74b1e4d0-3dd6-11e6-bc92-11acacdf373b] - page.customHeaders:  - {}
+[INFO  - 2016-06-29T08:49:57.157Z] Session [74b1e4d0-3dd6-11e6-bc92-11acacdf373b] - Session.negotiatedCapabilities - {"browserName":"phantomjs","version":"2.1.1","driverName":"ghostdriver","driverVersion":"1.2.0","platform":"windows-10-32bit","javascriptEnabled":true,"takesScreenshot":true,"handlesAlerts":false,"databaseEnabled":false,"locationContextEnabled":false,"applicationCacheEnabled":false,"browserConnectionEnabled":false,"cssSelectorsEnabled":true,"webStorageEnabled":false,"rotatable":false,"acceptSslCerts":false,"nativeEvents":true,"proxy":{"proxyType":"direct"}}
+[INFO  - 2016-06-29T08:49:57.158Z] SessionManagerReqHand - _postNewSessionCommand - New Session Created: 74b1e4d0-3dd6-11e6-bc92-11acacdf373b
+[ERROR - 2016-06-29T08:49:57.735Z] Session [74b1e4d0-3dd6-11e6-bc92-11acacdf373b] - page.onError - msg: TypeError: null is not an object (evaluating 'document.body.appendChild')
 
   phantomjs://platform/console++.js:263 in error
-[ERROR - 2016-06-28T08:58:55.581Z] WebElementLocator - _handleLocateCommand - Element(s) NOT Found: GAVE UP. Search Stop Time: 1467104335528
-
-  phantomjs://platform/console++.js:263 in error
-[ERROR - 2016-06-28T08:59:01.197Z] WebElementLocator - _handleLocateCommand - Element(s) NOT Found: GAVE UP. Search Stop Time: 1467104341181
-
-  phantomjs://platform/console++.js:263 in error
-[ERROR - 2016-06-28T08:59:06.861Z] WebElementLocator - _handleLocateCommand - Element(s) NOT Found: GAVE UP. Search Stop Time: 1467104346802
-
-  phantomjs://platform/console++.js:263 in error
-[ERROR - 2016-06-28T08:59:12.472Z] WebElementLocator - _handleLocateCommand - Element(s) NOT Found: GAVE UP. Search Stop Time: 1467104352464
-
-  phantomjs://platform/console++.js:263 in error
-[ERROR - 2016-06-28T08:59:18.094Z] WebElementLocator - _handleLocateCommand - Element(s) NOT Found: GAVE UP. Search Stop Time: 1467104358072
-
-  phantomjs://platform/console++.js:263 in error
-[ERROR - 2016-06-28T08:59:23.721Z] WebElementLocator - _handleLocateCommand - Element(s) NOT Found: GAVE UP. Search Stop Time: 1467104363703
+[ERROR - 2016-06-29T08:49:57.736Z] Session [74b1e4d0-3dd6-11e6-bc92-11acacdf373b] - page.onError - stack:
+  global code (http://gkcx.eol.cn/static/jquery/jquery-1.8.3.min.js:2)
 
   phantomjs://platform/console++.js:263 in error

@@ -157,7 +157,10 @@ class ProxyManager:
 
         :return: 代理服务器列表
         """
-        result = self.db.collection.find({'checked':1},projection={'_id':0,'proxy':1,'count':1,'speed':1})
+        result = self.db.collection.find({'checked':1},
+                                         projection={'_id':0,'proxy':1,'webdriverspeed':1},
+                                         sort=[('webdriverspeed',1)])
+        print(list(result))
         return [item['proxy'] for item in result]
 
     @property
