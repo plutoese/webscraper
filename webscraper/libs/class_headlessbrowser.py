@@ -47,8 +47,10 @@ class HeadlessBrowser:
         else:
             if type < 1:
                 self.browser = webdriver.PhantomJS(executable_path="D:\\tools\\phantomjs\\bin\\phantomjs.exe")
-            else:
+            elif type == 1:
                 self.browser = webdriver.Firefox()
+            else:
+                self.browser = webdriver.Ie()
 
         # 等待
         if timeout > 0:

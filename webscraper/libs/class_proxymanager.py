@@ -178,14 +178,14 @@ if __name__ == '__main__':
     web_list = ['http://www.163.com',
                  'http://www.sina.com.cn',
                  'http://www.zhibo8.cc/',
-                 'http://www.dgtle.com/portal.php']
+                 'http://epub.cnki.net/kns/brief/result.aspx?dbprefix=CJFQ']
 
     pmanager = ProxyManager()
     pmanager.set_check_websites(websites=web_list)
-    #pmanager.check_and_store()
-    #pmanager.update_proxy_db()
-    #pmanager.speed_for_valuable_proxies()
-    #print(pmanager.proxy)
-    #print(pmanager.random_proxy)
+    pmanager.check_and_store()
+    pmanager.update_proxy_db()
+    pmanager.speed_for_valuable_proxies()
+    print(pmanager.proxy)
+    print(pmanager.random_proxy)
     print(pmanager.checked_proxies)
-    #print(pmanager.best_speed_proxies)
+    print(pmanager.best_speed_proxies)
