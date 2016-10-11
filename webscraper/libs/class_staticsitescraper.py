@@ -32,7 +32,10 @@ class StaticSiteScraper:
         self.db.connect('cache','scraper')
 
         # 设置网页地址集合
-        self.mongo_pages = pages
+        if pages is None:
+            self.mongo_pages = set()
+        else:
+            self.mongo_pages = pages
         self.pages = set()
 
         # 设置标示
@@ -45,7 +48,7 @@ class StaticSiteScraper:
         else:
             self.proxies = None
 
-    def get_current_page_content(self,beautifulsoup=True):
+    def get_current_page_content(self, beautifulsoup=True):
         """ 获得当前网页的内容
 
         :param bool beautifulsoup: 说明返回的内容是否是bs4对象
@@ -84,7 +87,7 @@ class StaticSiteScraper:
         # 储存数据到MongoDB数据库
         if cache:
             if url not in self.mongo_pages:
-                self.db.collection.insert_one({'webaddress':url,
+                self.db.collection.insert_one({'web':url,
                                                'content':html,
                                                'label':self.label})
 
@@ -101,8 +104,8 @@ class StaticSiteScraper:
 
 if __name__ == '__main__':
     pmanager = ProxyManager()
-    ramdomproxy = pmanager.random_proxy
+    ramdomproxy = pmanager.recommended_proxies(number=1)[0]
     site_scraper = StaticSiteScraper('http://www.cuaa.net/cur/',proxy=ramdomproxy)
-    print(site_scraper.get_current_page_content())
-    #site_scraper.get_links(page_url='',condition='(\.\./)|\#',cache=True)
+    print(site_scraper.get_current_page_content().title)
+    site_scraper.get_links(page_url='',condition='(\.\./)|\#',cache=True)
 

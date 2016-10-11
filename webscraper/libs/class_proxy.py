@@ -17,7 +17,7 @@ import requests
 class Proxy:
     """ Proxy类用来处理代理服务器
 
-    :param str address: proxy的地址，形式如http://user:password@host:port/
+    :param str full_address: proxy的地址，形式如http://user:password@host:port/
     :param str type: 代理服务类型
     :return: 无返回值
     """
@@ -40,28 +40,41 @@ class Proxy:
         else:
             self.__address = 80
 
-    def is_valid(self,check_address='http://epub.cnki.net/kns/brief/result.aspx?dbprefix=CJFQ'):
+    def is_valid(self, check_address=None):
         """ 验证proxy是否有效
 
-        :param str check_address: 验证网址
+        :param str,dict check_address: 验证网址
         :return: 返回验证结果
         :rtype: bool
         """
+        if check_address is None:
+            check_address = {'address': 'http://epub.cnki.net/kns/brief/result.aspx?dbprefix=CJFQ',
+                             'title': '学术期刊—中国知网'}
         try:
-            #proxy_handler = request.ProxyHandler({self.__type: self.__full_address})
-            #opener = request.build_opener(proxy_handler)
-            #opener.addheaders = [('User-agent', 'Mozilla/5.0')]
-            #request.install_opener(opener)
-            #req = request.Request(check_address)
-            #web = request.urlopen(req,timeout=10)
             proxies = {'http':self.__full_address}
-            html = requests.get(url=check_address,proxies=proxies,timeout=10)
+            to_check_title = False
+            if isinstance(check_address,dict):
+                to_check_address = check_address['address']
+                to_check_title = True
+            elif isinstance(check_address,str):
+                to_check_address = check_address
+            else:
+                print('Wrong address Type: ',type(check_address))
+                return False
+
+            html = requests.get(url=to_check_address,proxies=proxies,timeout=10)
             if html.status_code != requests.codes.ok:
                 print(html.status_code.code)
                 return False
-            #bs = BeautifulSoup(web.read(),'lxml')
             bs = BeautifulSoup(html.content,'lxml')
-            print(bs.title)
+            # check title
+            if to_check_title:
+                title = re.split('<',re.split('>',re.sub('\s+','',str(bs.title)))[1])[0]
+                if not (title==check_address['title']):
+                    print('Wrong title: ',title)
+                    return False
+            else:
+                print(bs.title)
         except Exception:
             return False
         return True
@@ -92,9 +105,9 @@ class Proxy:
         return self.__password
 
 if __name__ == '__main__':
-    proxy = Proxy(full_address='http://36.250.74.87:8102')
+    proxy = Proxy(full_address='http://1.82.216.135:80')
     print(proxy.full_address,proxy.address,proxy.port,proxy.username,proxy.password)
-    if proxy.is_valid(check_address='http://epub.cnki.net/kns/brief/result.aspx?dbprefix=CJFQ'):
+    if proxy.is_valid(check_address={'address':'http://www.dgtle.com/portal.php','title':'数字尾巴-分享美好数字生活'}):
         print(proxy.full_address)
     else:
         print('It is a bad proxy!')

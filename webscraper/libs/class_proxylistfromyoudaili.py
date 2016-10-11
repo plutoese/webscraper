@@ -26,13 +26,16 @@ class ProxyListFromYoudaili:
         self.__proxy_web = proxy_web
         self.__proxy_unchecked_list = self._parse()
 
-    def export_to_db(self):
+    def export_to_db(self,db='cache',collection='proxy'):
         """ 导出到MongoDB数据库
 
+        :param str db: 指定数据库名称
+        :param str collection: 指定集合名称
+        :return: 无返回值
         """
         # 设置数据库
         self.db = MongoDB()
-        self.db.connect('cache','proxy')
+        self.db.connect(db,collection)
         for item in self.proxy_unchecked_list:
             found = self.db.collection.find_one({'proxy':item})
             if found is None:
@@ -46,7 +49,7 @@ class ProxyListFromYoudaili:
         """
         first_web = requests.get(self.__proxy_web)
         bsobj_first_web = BeautifulSoup(first_web.text, "lxml")
-        result1 = bsobj_first_web.find(class_='newslist_line')
+        result1 = bsobj_first_web.find(class_='chunlist')
         proxy_web = result1.find('a').attrs['href']
 
         r = requests.get(proxy_web)

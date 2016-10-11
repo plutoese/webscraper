@@ -23,16 +23,19 @@ class ProxyManager:
     :param str proxy_web: proxy的地址，默认为http://www.youdaili.net/Daili/guonei/
     :return: 无返回值
     """
-    def __init__(self,proxy_list=None):
+    def __init__(self,proxy_list=None, check_websites=None):
         # 设置数据库
         self.db = MongoDB()
         self.db.connect('cache','proxy')
 
         # 设置检验代理服务器有效性的网址列表
-        self.check_websites = ['http://www.163.com',
-                               'http://www.sina.com.cn',
-                               'http://www.zhibo8.cc/',
-                               'http://www.dgtle.com/portal.php']
+        if check_websites is None:
+            self.check_websites = [{'address':'http://www.163.com','title':'网易'},
+                                   {'address':'http://www.sina.com.cn','title':'新浪首页'},
+                                   {'address':'http://www.zhibo8.cc/','title':'直播吧-NBA直播|NBA直播吧|足球直播|英超直播|CCTV5在线直播|CBA直播|体育直播'},
+                                   {'address':'http://www.dgtle.com/portal.php','title':'数字尾巴-分享美好数字生活'}]
+        else:
+            self.check_websites = check_websites
 
         # 设置代理服务器列表
         if proxy_list is None:
@@ -43,13 +46,14 @@ class ProxyManager:
         # 设置检验完的代理服务器列表
         self.__checked_proxy_list = dict()
 
-    def set_check_websites(self,websites=None):
+    def set_check_websites(self, check_websites=None):
         """ 设置检验代理服务器有效性的网址列表
-        :param websites:
-        :return:
+
+        :param list check_websites: 待验证的网页地址列表
+        :return: 无返回值
         """
-        if websites is not None:
-            self.check_websites = websites
+        if check_websites is not None:
+            self.check_websites = check_websites
 
     def check_one_validity(self,proxy_address):
         """ 辅助函数，用来检验代理服务器的有效性
@@ -80,7 +84,8 @@ class ProxyManager:
 
     def check_and_store(self,check_websites=None):
         """ 验证和储存有效的代理服务器地址
-        :param check_websites:
+
+        :param list check_websites: 待验证的网页地址列表
         :return:
         """
         if check_websites is not None:
@@ -92,11 +97,11 @@ class ProxyManager:
             self.db.collection.find_one_and_update({'proxy':key},
                                                    {'$set': {'count': self.__checked_proxy_list[key]}})
 
-    def update_proxy_db(self):
+    def update_proxy_db(self, min_pass=2):
         """ 更新代理服务器数据库列表
         :return: 无返回值
         """
-        self.db.collection.delete_many({'count':{'$lt':1}})
+        self.db.collection.delete_many({'count':{'$lt':min_pass}})
 
     def speed_test(self,proxy_address,websites=None):
         """ 测试某个代理服务器的速度
@@ -152,18 +157,6 @@ class ProxyManager:
         return random.choice(result)
 
     @property
-    def checked_proxies(self):
-        """ 返回检查过的代理服务器列表
-
-        :return: 代理服务器列表
-        """
-        result = self.db.collection.find({'checked':1},
-                                         projection={'_id':0,'proxy':1,'webdriverspeed':1},
-                                         sort=[('webdriverspeed',1)])
-        print(list(result))
-        return [item['proxy'] for item in result]
-
-    @property
     def best_speed_proxies(self):
         """ 返回所有通过四个网站测试的代理服务器，用速度排序
 
@@ -174,18 +167,32 @@ class ProxyManager:
                                          sort=[('speed',1)])
         return [item['proxy'] for item in result]
 
+    def recommended_proxies(self, number=1):
+        """ 返回推荐的代理服务器
+
+        :param int number: 推荐代理服务器个数
+        :return: 返回推荐的代理服务器
+        :rtype: list
+        """
+        return random.sample(self.best_speed_proxies,min(number,len(self.best_speed_proxies)))
+
 if __name__ == '__main__':
-    web_list = ['http://www.163.com',
-                 'http://www.sina.com.cn',
-                 'http://www.zhibo8.cc/',
-                 'http://epub.cnki.net/kns/brief/result.aspx?dbprefix=CJFQ']
+    web_list = [{'address':'http://www.163.com','title':'网易'},
+                {'address':'http://www.sina.com.cn','title':'新浪首页'},
+                {'address':'http://www.zhibo8.cc/','title':'直播吧-NBA直播|NBA直播吧|足球直播|英超直播|CCTV5在线直播|CBA直播|体育直播'},
+                {'address':'http://www.dgtle.com/portal.php','title':'数字尾巴-分享美好数字生活'}]
+
 
     pmanager = ProxyManager()
-    pmanager.set_check_websites(websites=web_list)
-    pmanager.check_and_store()
-    pmanager.update_proxy_db()
-    pmanager.speed_for_valuable_proxies()
+    pmanager.set_check_websites(check_websites=web_list)
+
+    #pmanager.check_and_store()
+
+    #pmanager.update_proxy_db()
+
+    #pmanager.speed_for_valuable_proxies()
+
     print(pmanager.proxy)
     print(pmanager.random_proxy)
-    print(pmanager.checked_proxies)
+    print(pmanager.recommended_proxies(number=5))
     print(pmanager.best_speed_proxies)

@@ -203,7 +203,7 @@ if __name__ == '__main__':
     print(cnki_obj.browser.browser.get_cookies())
     cnki_obj.set_query("JN='经济研究'")
     time.sleep(4)
-    cnki_obj.set_period(start_period="2010",end_period="2010")
+    cnki_obj.set_period(start_period="2015",end_period="2015")
     time.sleep(5)
     cnki_obj.submit()
     cnki_obj.sort()

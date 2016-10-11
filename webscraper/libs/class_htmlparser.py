@@ -9,11 +9,11 @@
 # @date: 2016.06.24
 # --------------------------------------------------------------
 
-from urllib.parse import urljoin
 from bs4 import BeautifulSoup
-from libs.class_mongodb import MongoDB
-import requests
 import re
+from libs.class_proxymanager import ProxyManager
+from libs.class_staticsitescraper import StaticSiteScraper
+from libs.class_Excel import Excel
 
 
 class HtmlParser:
@@ -23,9 +23,11 @@ class HtmlParser:
     :return: 无返回值
     """
     def __init__(self,html_content=None):
-        # 设置网站地址
-        self.html_content = html_content
-        self.bs_obj = BeautifulSoup(self.html_content, "lxml")
+        if isinstance(html_content,BeautifulSoup):
+            self.bs_obj = html_content
+        else:
+            self.html_content = html_content
+            self.bs_obj = BeautifulSoup(self.html_content, "lxml")
 
     def table(self,css=None):
         """ 返回表格的数据
@@ -43,11 +45,18 @@ class HtmlParser:
         return table
 
 if __name__ == '__main__':
-    db = MongoDB()
-    db.connect('cache','scraper')
-    html = list(db.collection.find())[2]['content']
+    pmanager = ProxyManager()
+    ramdomproxy = pmanager.recommended_proxies(number=1)[0]
+    site_scraper = StaticSiteScraper('http://www.tianqihoubao.com/aqi/shanghai-201609.html',proxy=ramdomproxy)
+    html = site_scraper.get_current_page_content()
+    print(html.title)
+    print(isinstance(html,BeautifulSoup))
 
     htmlparser = HtmlParser(html_content=html)
     #print(htmlparser.bs_obj.select('.b > tr'))
-    print(htmlparser.table('.b'))
+    table = htmlparser.table('.b')
+    outfile = r'd:\down\quality.xlsx'
+    moutexcel = Excel(outfile)
+    moutexcel.new().append(table, 'mysheet')
+    moutexcel.close()
 
