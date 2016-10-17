@@ -50,8 +50,8 @@ class ProxyListFromYoudaili:
         first_web = requests.get(self.__proxy_web)
         bsobj_first_web = BeautifulSoup(first_web.text, "lxml")
         result1 = bsobj_first_web.find(class_='chunlist')
-        proxy_web = result1.find('a').attrs['href']
-
+        proxy_web = result1.findAll('a')[0].attrs['href']
+        print(proxy_web)
         r = requests.get(proxy_web)
         r.encoding = 'utf-8'
         bsobj_second_web = BeautifulSoup(r.text, "lxml")

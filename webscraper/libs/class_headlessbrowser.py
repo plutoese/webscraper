@@ -18,6 +18,7 @@ from selenium.webdriver.common.proxy import Proxy, ProxyType
 from selenium.webdriver.support.ui import Select, WebDriverWait
 from selenium.webdriver.support import expected_conditions
 from libs.class_proxymanager import ProxyManager
+from selenium.common.exceptions import NoSuchElementException
 import random
 
 
@@ -115,14 +116,17 @@ class HeadlessBrowser:
         :return: 返回定位
         :rtype: selenium.webdriver.remote.webelement.WebElement
         """
-        if css_selector is not None:
-            return self.browser.find_element_by_css_selector(css_selector)
-        if id is not None:
-            return self.browser.find_element_by_id(id)
-        if xpath is not None:
-            return self.browser.find_element_by_xpath(xpath)
-        if link_text is not None:
-            return self.browser.find_element_by_link_text(link_text)
+        try:
+            if css_selector is not None:
+                return self.browser.find_element_by_css_selector(css_selector)
+            if id is not None:
+                return self.browser.find_element_by_id(id)
+            if xpath is not None:
+                return self.browser.find_element_by_xpath(xpath)
+            if link_text is not None:
+                return self.browser.find_element_by_link_text(link_text)
+        except NoSuchElementException:
+            return False
 
     def get_text(self,location,beautiful=False):
         """ 返回文本
@@ -209,7 +213,14 @@ class HeadlessBrowser:
 if __name__ == '__main__':
     pmanager = ProxyManager()
     proxy = random.choice(pmanager.best_speed_proxies)
-    browser = HeadlessBrowser(proxy_type='http',timeout=5,type=0)
+    browser = HeadlessBrowser(timeout=5,type=1)
+    browser.surf('http://epub.cnki.net/kns/brief/result.aspx?dbprefix=CJFQ',
+                                 ready_check=(By.CSS_SELECTOR,'#bottom'))
+    print(browser.locate(css_selector='.cTed'))
+    time.sleep(2)
+    browser.close()
+
+    '''
     browser.surf('https://www.hqms.org.cn/usp/roster/index.jsp',
                  ready_check=(By.CSS_SELECTOR,'.table_result'))
     print('I am starting Action!')
@@ -224,6 +235,7 @@ if __name__ == '__main__':
     #print(browser.get_text('.txt0'))
     #browser.interact_one_time(location=browser.locate('div.bg_white:nth-child(3) > div:nth-child(1) > div:nth-child(2) > a:nth-child(1)'),click=True)
     #print(browser.current_window_handle)
+    '''
     '''
     university = '北京大学'
     print(''.join(['td > a[title="',university,'"]']))

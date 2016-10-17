@@ -87,9 +87,11 @@ class StaticSiteScraper:
         # 储存数据到MongoDB数据库
         if cache:
             if url not in self.mongo_pages:
-                self.db.collection.insert_one({'web':url,
-                                               'content':html,
-                                               'label':self.label})
+                result = self.db.collection.find_one({'web':url})
+                if result is None:
+                    self.db.collection.insert_one({'web':url,
+                                                   'content':html,
+                                                   'label':self.label})
 
         bsobj = BeautifulSoup(html, "lxml")
 
@@ -105,7 +107,7 @@ class StaticSiteScraper:
 if __name__ == '__main__':
     pmanager = ProxyManager()
     ramdomproxy = pmanager.recommended_proxies(number=1)[0]
-    site_scraper = StaticSiteScraper('http://www.cuaa.net/cur/',proxy=ramdomproxy)
+    site_scraper = StaticSiteScraper('http://www.tianqihoubao.com/aqi/',proxy=ramdomproxy)
     print(site_scraper.get_current_page_content().title)
-    site_scraper.get_links(page_url='',condition='(\.\./)|\#',cache=True)
+    site_scraper.get_links(page_url='shanghai-201610.html',condition='^/aqi/shanghai-.+',cache=True)
 

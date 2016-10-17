@@ -18,11 +18,13 @@ from libs.class_mongodb import MongoDB
 from libs.class_proxymanager import ProxyManager
 from selenium.webdriver.common.by import By
 from libs.class_multithread import MultiThread
+from libs.class_staticsitescraper import StaticSiteScraper
+from libs.class_htmlparser import HtmlParser
 import re
 
 
-class HospitalScraper:
-    """ HospitalScraper类用来抓取医院信息
+class AirQualityScraper:
+    """ AirQualityScraper类用来抓取空气质量信息
 
     :param str website: 网页地址
     :return: 无返回值
@@ -36,27 +38,28 @@ class HospitalScraper:
         self.db.connect('cache','scraper')
 
         # 地区
-        #self.regions = ['河北省', '山西省']
+        self.set_region()
 
-        self.regions = ['北京市', '天津市', '河北省', '山西省', '内蒙古自治区', '辽宁省', '吉林省', '黑龙江省',
-                        '上海市', '江苏省', '浙江省', '安徽省', '福建省', '江西省', '山东省', '河南省', '湖北省',
-                        '湖南省', '广东省', '广西壮族自治区', '海南省', '重庆市', '四川省', '贵州省', '云南省',
-                        '西藏自治区', '陕西省', '甘肃省', '青海省', '宁夏回族自治区', '新疆维吾尔族自治区', '新疆生产建设兵团']
+    def set_region(self):
+        site_scraper = StaticSiteScraper('http://www.tianqihoubao.com/aqi/',proxy=random.choice(self.pmanager.best_speed_proxies))
+        html = site_scraper.get_current_page_content()
+
+        # html parsing
+        self.regions = dict()
+        htmlparser = HtmlParser(html_content=html)
+        table = htmlparser.bs_obj.select('.citychk > dl')
+        for item in table:
+            row = item.find_all("a")
+            for unit in row:
+                three = re.split('\"',str(unit))
+                self.regions[re.split('\s+<',re.split('>',three[2])[1])[0]] = re.split('\.',three[1])[0]
+
+        print(len(self.regions))
 
     def one_thread(self,region):
-        browser = HeadlessBrowser(proxy_type='http',timeout=5,type=0)
-        browser.surf('https://www.hqms.org.cn/usp/roster/index.jsp',
-                     ready_check=(By.CSS_SELECTOR,'.table_result'))
-        print('I am starting Action!')
-        browser.interact_one_time(location='.province_select',select_text=region)
-        browser.interact_one_time(location='#btn_search',click=True)
-        time.sleep(5)
-        print('here')
-        result = browser.get_text(location='.table_result')
-        record = {'region':region,'content':result,'label':'hospital'}
-        print(region)
-        self.db.collection.insert_one(record)
-        browser.quit()
+        site_scraper = StaticSiteScraper('http://www.tianqihoubao.com/aqi/',proxy=random.choice(self.pmanager.best_speed_proxies))
+        site_scraper.get_links(page_url=''.join([re.split('/aqi/',region)[1],'-201610.html']),
+                                                condition=''.join(['^',region,'-.+']),cache=True)
 
     def multi_thread(self):
         """ 多线程验载入医院信息
@@ -72,8 +75,8 @@ class HospitalScraper:
                 self.regions.pop(0)'''
 
         threads = []
-        for region in self.regions:
-            t = MultiThread(self.one_thread,args=(region,),name=region)
+        for region in sorted(self.regions)[250:270]:
+            t = MultiThread(self.one_thread,args=(self.regions[region],),name=region)
             threads.append(t)
 
         for thread in threads:
@@ -83,6 +86,6 @@ class HospitalScraper:
             thread.join()
 
 if __name__ == '__main__':
-    hscraper = HospitalScraper()
+    hscraper = AirQualityScraper()
     hscraper.multi_thread()
 

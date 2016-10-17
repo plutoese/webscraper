@@ -30,9 +30,13 @@ class Cnki:
         self.soups = list()
         self.more = True
         self.browser = HeadlessBrowser(proxy=proxy, type=type)
-        self.browser.surf('http://epub.cnki.net/kns/brief/result.aspx?dbprefix=CJFQ',
-                          ready_check=(By.CSS_SELECTOR,'#bottom'))
+        #self.browser.surf('http://epub.cnki.net/kns/brief/result.aspx?dbprefix=CJFQ',
+        #                  ready_check=(By.CSS_SELECTOR,'#bottom'))
         time.sleep(2)
+
+    def is_connected(self):
+        return self.browser.surf('http://epub.cnki.net/kns/brief/result.aspx?dbprefix=CJFQ',
+                                 ready_check=(By.CSS_SELECTOR,'#bottom'))
 
     def submit(self):
         """ 提交查询，进行搜索
@@ -133,6 +137,15 @@ class Cnki:
         for subject in subjects:
             self.browser.interact_one_time(location=self.browser.locate(xpath=''.join(["//input[@name='",subject,"']"])),click=True)
         time.sleep(1)
+
+    def number_of_literature(self):
+        """ 返回文献数量
+
+        :return: 返回文献数量
+        """
+        self.browser.switch(iframe='iframeResult')
+        total_number_str = self.browser.browser.find_element_by_css_selector('.pageBar_min > div:nth-child(1)').text
+        return re.sub(',','',re.findall('\d+,?\d+',re.sub('\s+','',total_number_str))[0])
 
     def export_to_pickle(self,file=r'D:\data\result\literature_list.pkl'):
         """ 到处有效的代理服务器列表到文件
