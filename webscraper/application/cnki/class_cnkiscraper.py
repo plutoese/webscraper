@@ -385,6 +385,7 @@ class CnkiScraperInterface:
                 return False
         return True
 
+    @staticmethod
     def insert_to_db(self, literatures=None, database='paper', collection='cliterature'):
         db = MongoDB()
         db.connect(database,collection)
@@ -411,126 +412,6 @@ class CnkiScraperInterface:
                                               {'$set':{'cite':record.get('cite'),'download':record.get('download')}})
 
 
-class CnkiJournalScraper:
-    """ 抓取杂志文献
-
-    :param dict,list journals: 抓取的杂志信息，list的每个元素是dict，键值包括journal，issn，start_year, end_year
-    :param str proxy: 代理服务器
-    :param int type: 浏览器类型，0为PhantomJS，1为Firefox
-    :param bool multi: 是否启用多线性
-    """
-    def __init__(self, journals=None, proxy=None, type=1, multi=False):
-        self.proxy = proxy
-        self.type = type
-        self.journals = journals
-        self.multi = multi
-        self.cnki_obj = None
-        self.db = MongoDB()
-        self.db.connect('paper','cliterature')
-
-    def run(self):
-        """ 运行爬虫
-
-        :return: 无返回值
-        """
-        if isinstance(self.journals,dict):
-            self.single_thread_start()
-
-    def check_connection(self, max_connection_number=10):
-        """ 连接并返回是否连接信息
-
-        :param int max_connection_number: 最大连接次数
-        :return: 返回是否成功连接
-        :rtype: bool
-        """
-        is_proxy_successful = False
-        max_connection_number = max_connection_number
-        i = 1
-        while not is_proxy_successful:
-            proxy = random.choice(self.proxy)
-            print(self.journals.get('journal'),'\t',proxy)
-
-            self.cnki_obj = CnkiScraper(proxy=proxy,type=1)
-            if self.cnki_obj.is_connected():
-                is_proxy_successful = True
-            else:
-                self.cnki_obj.close()
-                time.sleep(5)
-            i += 1
-            if i > max_connection_number:
-                return False
-        return True
-
-    def single_thread_start(self):
-        """ 单线程爬虫
-
-        :return: 无返回值
-        """
-        # 设置issn，起始年份和终止年份
-        journal = self.journals.get('journal')
-        issn = self.journals.get('issn')
-        start_year = self.journals.get('start_year')
-        end_year = self.journals.get('end_year')
-
-        # 检验是否成功连接网站，如果不成功，报错
-        if not self.check_connection():
-            raise Exception
-
-        # 在网页上设定查询字符串，选择年份，然后提交
-        query_str = ''.join(["SN='",issn,"'"])
-        self.cnki_obj.set_query(query_str)
-        time.sleep(1)
-        self.cnki_obj.set_period(start_period=start_year,end_period=end_year)
-        time.sleep(1)
-        self.cnki_obj.submit()
-
-        # 转换到结果显示框架
-        self.cnki_obj.switch_to_result_frame()
-
-        # 记录查询得到的文献数量，用来进行后期核对
-        total_number = self.cnki_obj.number_of_literature()
-        # 切换到每页50条文献的显示
-        self.cnki_obj.browser.interact_one_time(location='#id_grid_display_num > a:nth-child(3)',click=True)
-        time.sleep(1)
-
-        # 选择所有文献
-        self.cnki_obj.select_all_literature()
-
-        # 如果存在下一页，那么点击进入下一页，并选择所有文献
-        while self.cnki_obj.is_exist_next_page():
-            self.cnki_obj.go_next()
-            time.sleep(2)
-            self.cnki_obj.select_all_literature()
-
-        #导出所有文献
-        self.cnki_obj.export_literature()
-        time.sleep(2)
-        # 对文献进行一系列操作，并抓取文献到soups
-        self.cnki_obj.child_operation()
-
-        # 如果文献数量正确，插入文献到数据库
-        literatures = self.cnki_obj.export_to_dict()
-        print(len(literatures),total_number,type(len(literatures)),type(total_number),int(total_number))
-        if len(literatures) == int(total_number):
-            self.insert_to_db(literatures)
-        self.cnki_obj.close()
-
-    def insert_to_db(self, literatures=None):
-        for record in literatures:
-            print(record['title'],record['journal'],record['year'],record['issue'],record.get('pages'))
-            if record.get('author') is None:
-                print('No author!')
-                continue
-            result = self.db.collection.find_one({'title':record.get('title'),
-                                         'journal':record.get('journal'),
-                                         'year':record.get('year'),
-                                         'issue':record.get('issue'),
-                                         'pages':record.get('pages')})
-            if result is None:
-                print('Insert...!')
-                self.db.collection.insert_one(record)
-
-
 if __name__ == '__main__':
     pmanager = ProxyManager()
 
@@ -539,7 +420,7 @@ if __name__ == '__main__':
                                        period={'start_year':'2012'},
                                        subject=['经济与管理科学'],
                                        limit=100)
-    cnki_interface.insert_to_db(literatures=literatures,collection='clit')
+    CnkiScraperInterface.insert_to_db(literatures=literatures,collection='clit')
 
     '''
     # 杂志
