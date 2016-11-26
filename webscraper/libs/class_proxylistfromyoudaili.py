@@ -22,8 +22,9 @@ class ProxyListFromYoudaili:
     :return: 无返回值
     """
     def __init__(self,proxy_web='http://www.youdaili.net/Daili/http/',
-                 check_website='http://www.cuaa.net/'):
+                 check_website='http://www.cuaa.net/',latest=1):
         self.__proxy_web = proxy_web
+        self.__latest = latest
         self.__proxy_unchecked_list = self._parse()
 
     def export_to_db(self,db='cache',collection='proxy'):
@@ -50,14 +51,17 @@ class ProxyListFromYoudaili:
         first_web = requests.get(self.__proxy_web)
         bsobj_first_web = BeautifulSoup(first_web.text, "lxml")
         result1 = bsobj_first_web.find(class_='chunlist')
-        proxy_web = result1.findAll('a')[0].attrs['href']
-        print(proxy_web)
-        r = requests.get(proxy_web)
-        r.encoding = 'utf-8'
-        bsobj_second_web = BeautifulSoup(r.text, "lxml")
 
-        ip_address_list = bsobj_second_web.find_all(text=re.compile('\d+\.\d+\.\d+\.\d+'))
-        proxy_list = [re.split('@',re.sub('\s+','',ip))[0] for ip in ip_address_list]
+        proxy_list = []
+        for i in range(self.__latest):
+            proxy_web = result1.findAll('a')[i].attrs['href']
+            print(proxy_web)
+            r = requests.get(proxy_web)
+            r.encoding = 'utf-8'
+            bsobj_second_web = BeautifulSoup(r.text, "lxml")
+
+            ip_address_list = bsobj_second_web.find_all(text=re.compile('\d+\.\d+\.\d+\.\d+'))
+            proxy_list.extend([re.split('@',re.sub('\s+','',ip))[0] for ip in ip_address_list])
         return proxy_list
 
     @property
@@ -70,6 +74,6 @@ class ProxyListFromYoudaili:
         return self.__proxy_unchecked_list
 
 if __name__ == '__main__':
-    plist = ProxyListFromYoudaili()
+    plist = ProxyListFromYoudaili(latest=5)
     print(plist.proxy_unchecked_list)
     plist.export_to_db()

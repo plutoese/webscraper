@@ -15,6 +15,7 @@ from libs.class_mongodb import MongoDB
 from libs.class_proxymanager import ProxyManager
 import requests
 import re
+import random
 
 
 class StaticSiteScraper:
@@ -23,13 +24,13 @@ class StaticSiteScraper:
     :param str website: 网页地址
     :return: 无返回值
     """
-    def __init__(self,website=None,label=None,proxy=None,pages=None):
+    def __init__(self,website=None,label=None,proxy=None,pages=None,dbase='cache',collection='scraper'):
         # 设置网站地址
         self.website = website
 
         # 设置数据库
         self.db = MongoDB()
-        self.db.connect('cache','scraper')
+        self.db.connect(dbase,collection)
 
         # 设置网页地址集合
         if pages is None:
@@ -105,9 +106,12 @@ class StaticSiteScraper:
 
 
 if __name__ == '__main__':
+    '''
     pmanager = ProxyManager()
-    ramdomproxy = pmanager.recommended_proxies(number=1)[0]
-    site_scraper = StaticSiteScraper('http://www.tianqihoubao.com/aqi/',proxy=ramdomproxy)
+    ramdomproxy = random.choice(pmanager.recommended_proxies(10))
+    site_scraper = StaticSiteScraper('http://lishi.tianqi.com/baoshan/',proxy=ramdomproxy)
     print(site_scraper.get_current_page_content().title)
-    site_scraper.get_links(page_url='shanghai-201610.html',condition='^/aqi/shanghai-.+',cache=True)
+    site_scraper.get_links(page_url='index.html',condition='http://lishi.tianqi.com/baoshan/.+',cache=True)'''
 
+    r = requests.get('https://kyfw.12306.cn/otn/lcxxcx/query?purpose_codes=ADULT&queryDate=2016-10-05&from_station=CDW&to_station=SHH',verify=False)
+    print(r.json())

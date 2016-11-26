@@ -112,6 +112,18 @@ class CnkiScraper:
         """
         self.browser.interact_one_time(location=self.browser.locate(id='Page_next'),click=True)
 
+    def is_exist_location(self,location=None):
+        """ 检验网页上指定的位置是否存在，存在返回True，否则返回False
+
+        :param location: css选择器
+        :return: 返回网页上指定的位置是否存在
+        :rtype: bool
+        """
+        if self.browser.locate(css_selector=location):
+            return True
+        else:
+            return False
+
     def cite_and_download(self):
         """ 返回文献被引次数和下载次数
 
@@ -119,24 +131,29 @@ class CnkiScraper:
         :rtype: dict
         """
         literature_cite = dict()
-        table = self.browser.get_text(location='.GridTableContent',beautiful=False)
-        for item in re.split('分享',table)[1:]:
-            record = [unit for unit in re.split(' ',item) if re.match('^\s*$',unit) is None]
+        i = 2
+        fmt_title = '.GridTableContent > tbody:nth-child(1) > tr:nth-child({}) > td:nth-child(2) > a:nth-child(1)'
+        fmt_cite = '.GridTableContent > tbody:nth-child(1) > tr:nth-child({}) > td:nth-child(6) > a:nth-child(1)'
+        fmt_download = '.GridTableContent > tbody:nth-child(1) > tr:nth-child({}) > td:nth-child(7) > span:nth-child(2)'
+        while self.is_exist_location(location=fmt_title.format(str(i))):
+            title = self.browser.get_text(location=fmt_title.format(str(i)),beautiful=False)
+            title = re.sub('\s+','',title)
 
-            if len(record) > 0:
-                title = record[1]
-                to_be_split = re.split('\n',record[-1])
-                if len(to_be_split) > 2:
-                    if re.match('\d{4}/',to_be_split[0]) is not None:
-                        cite = 0
-                        download = int(to_be_split[1])
-                    else:
-                        cite = int(to_be_split[0])
-                        download = int(to_be_split[1])
-                else:
-                    if re.match('\d{4}/',to_be_split[0]) is None:
-                        cite = int(to_be_split[0])
-                literature_cite[title] = {'cite':cite, 'download':download}
+            if re.search('交通基础设施质量与经济增长',title) is not None:
+                print(title)
+
+            if self.is_exist_location(location=fmt_cite.format(str(i))):
+                cite = self.browser.get_text(location=fmt_cite.format(str(i)),beautiful=False)
+            else:
+                cite = 0
+            if self.is_exist_location(location=fmt_download.format(str(i))):
+                download = self.browser.get_text(location=fmt_download.format(str(i)),beautiful=False)
+            else:
+                download = 0
+            if title in literature_cite:
+                print('The same title: ',title)
+            literature_cite[title] = {'cite':cite, 'download':download}
+            i += 1
 
         return literature_cite
 
@@ -220,7 +237,12 @@ class CnkiScraper:
             one_literature = dict()
             for item in items:
                 if '{Title}' in item:
-                    title = re.sub('\s+','',re.split('}: ',item)[1])
+                    title = re.split('}: ',item)[1]
+                    #title = re.sub('\s+','',re.split('}: ',item)[1])
+                    if re.search('amp;',title) is not None:
+                        title = re.sub('amp;','',title)
+                        print('DDD,',title)
+
                     one_literature['title'] = title
                 if '{Author}' in item:
                     one_literature['author'] = [re.sub('\s+','',author) for author in re.split('\{Author\}\: ',item)
@@ -316,6 +338,7 @@ class CnkiScraperInterface:
 
         cites = dict()
         cites.update(self.cnki_obj.cite_and_download())
+
         self.cnki_obj.select_all_literature()
 
         if limit is not None:
@@ -330,7 +353,6 @@ class CnkiScraperInterface:
             while self.cnki_obj.is_exist_next_page():
                 self.cnki_obj.go_next()
                 time.sleep(1)
-                self.cnki_obj.select_all_literature()
                 cites.update(self.cnki_obj.cite_and_download())
                 self.cnki_obj.select_all_literature()
 
@@ -344,11 +366,13 @@ class CnkiScraperInterface:
         literatures = self.cnki_obj.export_to_dict()
 
         for literature in literatures:
-            if literature.get('title') in cites:
-                literature['cite'] = cites.get(literature.get('title')).get('cite')
-                literature['download'] = cites.get(literature.get('title')).get('download')
+            if re.sub('\s+','',literature.get('title')) in cites:
+                literature['cite'] = cites.get(re.sub('\s+','',literature.get('title'))).get('cite')
+                literature['download'] = cites.get(re.sub('\s+','',literature.get('title'))).get('download')
             else:
+                print(literature)
                 print('Can not found: ',literature.get('title'))
+                raise Exception
 
         self.cnki_obj.close()
 
@@ -371,22 +395,28 @@ class CnkiScraperInterface:
         is_proxy_successful = False
         max_connection_number = max_connection_number
         i = 1
-        while not is_proxy_successful:
-            proxy = random.choice(self.proxy)
+        if self.proxy is not None:
+            while not is_proxy_successful:
+                proxy = random.choice(self.proxy)
 
-            self.cnki_obj = CnkiScraper(proxy=proxy,type=1)
+                self.cnki_obj = CnkiScraper(proxy=proxy,type=1)
+                if self.cnki_obj.is_connected():
+                    is_proxy_successful = True
+                else:
+                    self.cnki_obj.close()
+                    time.sleep(5)
+                i += 1
+                if i > max_connection_number:
+                    return False
+            return True
+        else:
+            self.cnki_obj = CnkiScraper(type=1)
             if self.cnki_obj.is_connected():
-                is_proxy_successful = True
+                return True
             else:
-                self.cnki_obj.close()
-                time.sleep(5)
-            i += 1
-            if i > max_connection_number:
                 return False
-        return True
 
-    @staticmethod
-    def insert_to_db(self, literatures=None, database='paper', collection='cliterature'):
+    def insert_to_db(self, literatures=None, database='paper', collection='cliterature',condition=None):
         db = MongoDB()
         db.connect(database,collection)
         for record in literatures:
@@ -394,6 +424,11 @@ class CnkiScraperInterface:
             if record.get('author') is None:
                 print('No author!')
                 continue
+            if condition is not None:
+                if re.match(condition[1],record.get(condition[0])) is None:
+                    print('Journal not matched!')
+                    continue
+
             result = db.collection.find_one({'title':record.get('title'),
                                          'journal':record.get('journal'),
                                          'year':record.get('year'),
@@ -415,12 +450,16 @@ class CnkiScraperInterface:
 if __name__ == '__main__':
     pmanager = ProxyManager()
 
-    cnki_interface = CnkiScraperInterface(proxy=pmanager.recommended_proxies(10))
-    literatures = cnki_interface.query(querystr="JN='经济研究'",
-                                       period={'start_year':'2012'},
-                                       subject=['经济与管理科学'],
-                                       limit=100)
-    CnkiScraperInterface.insert_to_db(literatures=literatures,collection='clit')
+    journal_name = '世界经济文汇'
+    for y in ['2010','2011','2012','2013','2014','2015','2016'][0:]:
+
+        cnki_interface = CnkiScraperInterface(proxy=pmanager.recommended_proxies(10))
+        #cnki_interface = CnkiScraperInterface()
+
+        literatures = cnki_interface.query(querystr="JN='{}'".format(journal_name),
+                                       period={'start_year':y,'end_year':y})
+        cnki_interface.insert_to_db(literatures=literatures,collection='cliterature',
+                                    condition=('journal','^{}$'.format(journal_name)))
 
     '''
     # 杂志

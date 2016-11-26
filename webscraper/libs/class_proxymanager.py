@@ -179,16 +179,17 @@ class ProxyManager:
 if __name__ == '__main__':
     web_list = [{'address':'http://www.163.com','title':'网易'},
                 {'address':'http://www.sina.com.cn','title':'新浪首页'},
-                {'address':'http://epub.cnki.net/kns/brief/result.aspx?dbprefix=CJFQ','title':'学术期刊—中国知网'},
+                {'address':'http://lishi.tianqi.com/','title':'历史天气查询|历史天气预报查询|历史气温查询|过去天气查询_历史天气查询网'},
                 {'address':'http://www.dgtle.com/portal.php','title':'数字尾巴-分享美好数字生活'}]
 
+    #web_list = [{'address':'http://epub.cnki.net/kns/brief/result.aspx?dbprefix=CJFQ','title':'学术期刊—中国知网'}]
 
     pmanager = ProxyManager()
     pmanager.set_check_websites(check_websites=web_list)
 
     pmanager.check_and_store()
 
-    pmanager.update_proxy_db()
+    pmanager.update_proxy_db(min_pass=1)
 
     pmanager.speed_for_valuable_proxies()
 

@@ -13,6 +13,7 @@ import re
 from bs4 import BeautifulSoup
 from urllib import request
 import requests
+from libs.class_mongodb import MongoDB
 
 class Proxy:
     """ Proxy类用来处理代理服务器
@@ -105,9 +106,15 @@ class Proxy:
         return self.__password
 
 if __name__ == '__main__':
-    proxy = Proxy(full_address='http://1.82.216.135:80')
-    print(proxy.full_address,proxy.address,proxy.port,proxy.username,proxy.password)
-    if proxy.is_valid(check_address={'address':'http://www.dgtle.com/portal.php','title':'数字尾巴-分享美好数字生活'}):
-        print(proxy.full_address)
-    else:
-        print('It is a bad proxy!')
+    #proxy = Proxy(full_address='http://58.247.88.54:80')
+
+    db = MongoDB()
+    db.connect(database_name='cache',collection_name='proxy')
+    addresses = db.collection.find()
+    for address in addresses:
+        proxy = Proxy(full_address='http://{}'.format(address.get('proxy')))
+        print(proxy.full_address,proxy.address,proxy.port,proxy.username,proxy.password)
+        if proxy.is_valid(check_address={'address':'http://epub.cnki.net/kns/brief/result.aspx?dbprefix=CJFQ','title':'学术期刊—中国知网'}):
+            print('successful: ',proxy.full_address)
+        else:
+            print('It is a bad proxy!')
