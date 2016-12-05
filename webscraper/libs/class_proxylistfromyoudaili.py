@@ -74,6 +74,6 @@ class ProxyListFromYoudaili:
         return self.__proxy_unchecked_list
 
 if __name__ == '__main__':
-    plist = ProxyListFromYoudaili(latest=5)
+    plist = ProxyListFromYoudaili(latest=10)
     print(plist.proxy_unchecked_list)
     plist.export_to_db()

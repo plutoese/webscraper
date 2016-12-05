@@ -31,9 +31,7 @@ class ProxyManager:
         # 设置检验代理服务器有效性的网址列表
         if check_websites is None:
             self.check_websites = [{'address':'http://www.163.com','title':'网易'},
-                                   {'address':'http://www.sina.com.cn','title':'新浪首页'},
-                                   {'address':'http://www.zhibo8.cc/','title':'直播吧-NBA直播|NBA直播吧|足球直播|英超直播|CCTV5在线直播|CBA直播|体育直播'},
-                                   {'address':'http://www.dgtle.com/portal.php','title':'数字尾巴-分享美好数字生活'}]
+                                   {'address':'http://www.sina.com.cn','title':'新浪首页'}]
         else:
             self.check_websites = check_websites
 
@@ -178,9 +176,7 @@ class ProxyManager:
 
 if __name__ == '__main__':
     web_list = [{'address':'http://www.163.com','title':'网易'},
-                {'address':'http://www.sina.com.cn','title':'新浪首页'},
-                {'address':'http://lishi.tianqi.com/','title':'历史天气查询|历史天气预报查询|历史气温查询|过去天气查询_历史天气查询网'},
-                {'address':'http://www.dgtle.com/portal.php','title':'数字尾巴-分享美好数字生活'}]
+                {'address':'http://www.sina.com.cn','title':'新浪首页'}]
 
     #web_list = [{'address':'http://epub.cnki.net/kns/brief/result.aspx?dbprefix=CJFQ','title':'学术期刊—中国知网'}]
 
