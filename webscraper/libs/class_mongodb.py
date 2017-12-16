@@ -86,9 +86,9 @@ class MongoDB:
         return self.__collection
 
 if __name__ == '__main__':
-    db = MongoDB(mongo_str='mongodb://plutoese:z1Yh29@139.196.189.191:3717/')
+    db = MongoDB(mongo_str='mongodb://mongouser:z1Yh2900@123.207.185.126:27017/')
     #db = MongoDB()
     print(db.client.database_names())
-    #db.connect('region','province')
-    #print(db.collection)
+    db.connect('statsgov','categoriesforprovince')
+    print(db.collection.find_one())
 

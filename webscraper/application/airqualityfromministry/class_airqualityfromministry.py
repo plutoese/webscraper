@@ -58,4 +58,4 @@ if __name__ == '__main__':
     air_grasper = AirQualityFromMinistry(web_template='http://datacenter.mep.gov.cn/report/air_daily/air_dairy.jsp?city=&startdate=2014-01-01&enddate=2016-12-02&page={}',
                                          web_range=range(1,5),
                                          additional_info={'source':'中国环境保护部数据中心'})
-    air_grasper.run(using_proxy=False,multi_thread=2)
+    air_grasper.run(using_proxy=False,multi_thread=1)
