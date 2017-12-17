@@ -137,7 +137,7 @@ class AirQualityScraper:
 if __name__ == '__main__':
 
     start = time.time()
-    air_scraper = AirQualityScraper()
+    air_scraper = AirQualityScraper(using_proxy=True)
     air_scraper.init()
     air_scraper.start_scrape()
     print('Total: {}'.format(time.time() - start))
