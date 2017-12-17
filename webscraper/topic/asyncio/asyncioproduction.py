@@ -7,7 +7,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 
 class AsyncStaticScraper():
-    def __init__(self, urls, using_proxy=False):
+    def __init__(self, urls, using_proxy=False, ):
         self._urls = urls
         self._result = None
         self._using_proxy = using_proxy
