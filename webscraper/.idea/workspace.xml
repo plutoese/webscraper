@@ -22,16 +22,13 @@
     <SUITE FILE_PATH="coverage/webscraper$application_air_quality.coverage" NAME="application_air_quality Coverage Results" MODIFIED="1466911818705" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/application/airquality" />
     <SUITE FILE_PATH="coverage/webscraper$class_staticscraper.coverage" NAME="class_staticscraper Coverage Results" MODIFIED="1466761299561" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/webscraper$class_staticsitescraper__1_.coverage" NAME="class_staticsitescraper (1) Coverage Results" MODIFIED="1466841282685" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/libs" />
-<<<<<<< HEAD
     <SUITE FILE_PATH="coverage/webscraper$class_htmlparser.coverage" NAME="class_htmlparser Coverage Results" MODIFIED="1466929058731" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/libs" />
     <SUITE FILE_PATH="coverage/webscraper$demo_requests.coverage" NAME="demo_requests Coverage Results" MODIFIED="1466734033999" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/demo" />
     <SUITE FILE_PATH="coverage/webscraper$app_air_quality_scraper.coverage" NAME="app_air_quality_scraper Coverage Results" MODIFIED="1466984761858" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/application/airquality" />
     <SUITE FILE_PATH="coverage/webscraper$class_proxy.coverage" NAME="class_proxy Coverage Results" MODIFIED="1466736545715" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/libs" />
     <SUITE FILE_PATH="coverage/webscraper$app_air_quality_data_cleaning.coverage" NAME="app_air_quality_data_cleaning Coverage Results" MODIFIED="1466935760365" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/application/airquality" />
-=======
     <SUITE FILE_PATH="coverage/webscraper$demo_decorator.coverage" NAME="demo_decorator Coverage Results" MODIFIED="1466517183280" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/demo" />
     <SUITE FILE_PATH="coverage/webscraper$app_air_quality_scraper.coverage" NAME="app_air_quality_scraper Coverage Results" MODIFIED="1466996532261" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/application/airquality" />
->>>>>>> c2468b31e89592732134690e1765a39c480dd8de
     <SUITE FILE_PATH="coverage/webscraper$demo_phantomjs.coverage" NAME="demo_phantomjs Coverage Results" MODIFIED="1466731359161" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/demo" />
     <SUITE FILE_PATH="coverage/webscraper$class_proxy.coverage" NAME="class_proxy Coverage Results" MODIFIED="1466736545715" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/libs" />
     <SUITE FILE_PATH="coverage/webscraper$demo_requests.coverage" NAME="demo_requests Coverage Results" MODIFIED="1466734033999" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/demo" />
@@ -73,7 +70,6 @@
       <file leaf-file-name="app_air_quality_scraper.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/application/airquality/app_air_quality_scraper.py">
           <provider selected="true" editor-type-id="text-editor">
-<<<<<<< HEAD
             <state vertical-scroll-proportion="0.4392361">
               <caret line="19" column="0" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
               <folding />
@@ -87,13 +83,11 @@
             <state vertical-scroll-proportion="0.0">
               <caret line="37" column="60" selection-start-line="37" selection-start-column="23" selection-end-line="37" selection-end-column="60" />
               <folding />
-=======
             <state vertical-scroll-proportion="0.56276447">
               <caret line="21" column="8" selection-start-line="21" selection-start-column="8" selection-end-line="21" selection-end-column="8" />
               <folding>
                 <element signature="e#322#332#0" expanded="true" />
               </folding>
->>>>>>> c2468b31e89592732134690e1765a39c480dd8de
             </state>
           </provider>
         </entry>
@@ -563,11 +557,8 @@
     <frame x="-8" y="-8" width="1936" height="1066" extended-state="7" />
     <editor active="false" />
     <layout>
-<<<<<<< HEAD
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3488624" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-=======
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.34270832" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
->>>>>>> c2468b31e89592732134690e1765a39c480dd8de
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -978,17 +969,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/application/airquality/app_air_quality_scraper.py">
       <provider selected="true" editor-type-id="text-editor">
-<<<<<<< HEAD
         <state vertical-scroll-proportion="0.4392361">
           <caret line="19" column="0" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
           <folding />
-=======
         <state vertical-scroll-proportion="0.56276447">
           <caret line="21" column="8" selection-start-line="21" selection-start-column="8" selection-end-line="21" selection-end-column="8" />
           <folding>
             <element signature="e#322#332#0" expanded="true" />
           </folding>
->>>>>>> c2468b31e89592732134690e1765a39c480dd8de
         </state>
       </provider>
     </entry>
