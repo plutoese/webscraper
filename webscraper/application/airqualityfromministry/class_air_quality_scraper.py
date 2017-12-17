@@ -137,7 +137,7 @@ class AirQualityScraper:
 if __name__ == '__main__':
 
     start = time.time()
-    air_scraper = AirQualityScraper(start_date='2017-12-11',end_date='2017-12-15')
+    air_scraper = AirQualityScraper()
     air_scraper.init()
     air_scraper.start_scrape()
     print('Total: {}'.format(time.time() - start))
@@ -146,9 +146,9 @@ if __name__ == '__main__':
     mongo = MongoDB()
     conn = MonCollection(mongo, 'scraperdata', 'airqualityfromMin').collection
     #conn.update_many({'OPER_DATE':'2017-08-22'},{'$set': {'OPER_DATE': datetime.datetime.strptime('2017-08-22','%Y-%m-%d')}})
-    print(conn.find().distinct('OPER_DATE'))
-    conn.create_index([("OPER_DATE", pymongo.ASCENDING)])
-    conn.create_index([("OPER_DATE", pymongo.ASCENDING),("CITYCODE", pymongo.ASCENDING)])'''
+    print(sorted(conn.find().distinct('OPER_DATE')))
+    #conn.create_index([("OPER_DATE", pymongo.ASCENDING)])
+    #conn.create_index([("OPER_DATE", pymongo.ASCENDING),("CITYCODE", pymongo.ASCENDING)])'''
 
 
 
