@@ -51,8 +51,12 @@ class AirQualityScraper:
 
         # 如果起始起始日期缺省，就设置起始和终止日期为昨天
         if start_date is None:
+            last_date = sorted(AirQualityScraper.conn.find().distinct('OPER_DATE'))[-1]
+            start_date = last_date + datetime.timedelta(days=1)
+            start_date = start_date.strftime(format='%Y-%m-%d')
+
+        if end_date is None:
             today = arrow.utcnow().shift(days=-1)
-            start_date = today.strftime(format='%Y-%m-%d')
             end_date = today.strftime(format='%Y-%m-%d')
 
         # 设置待爬取的网址
