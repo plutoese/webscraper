@@ -32,10 +32,11 @@ import time
 
 
 class AsyncStaticScraper():
-    def __init__(self, urls, request_type='get', using_proxy=False, processor=lambda x: x):
+    def __init__(self, urls, request_type='get', response_type='text',using_proxy=False, processor=lambda x: x):
         self._urls = urls
         self._result = None
         self._request_type = request_type
+        self._response_type = response_type
         self._using_proxy = using_proxy
         self._processor = processor
 
@@ -65,7 +66,12 @@ class AsyncStaticScraper():
             with aiohttp.Timeout(10):
                 async with scrape_fun as response:
                     assert response.status == 200
-                    result = await response.read()
+                    if self._response_type == 'json':
+                        result = await response.json()
+                    elif self._response_type == 'text':
+                        result = await response.text()
+                    else:
+                        result = await response.read()
                     return self._processor(result), url
         except:
             try_time += 1

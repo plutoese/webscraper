@@ -219,7 +219,7 @@ class CityCongestionScraper:
         urls = []
         urls.append(url_fmt.format(citycode))
 
-        scraper = AsyncStaticScraper(urls=urls, request_type='get', using_proxy=self._using_proxy)
+        scraper = AsyncStaticScraper(urls=urls, request_type='get', response_type='text',using_proxy=self._using_proxy)
         scraper.start()
 
         for result, url in scraper.result:
@@ -242,7 +242,7 @@ class CityCongestionScraper:
         :return: 返回城市列表
         """
         url = 'http://report.amap.com/ajax/getCityInfo.do'
-        scraper = AsyncStaticScraper(urls=[url],request_type='get',using_proxy=self._using_proxy)
+        scraper = AsyncStaticScraper(urls=[url],request_type='get',response_type='text',using_proxy=self._using_proxy)
         scraper.start()
 
         return json.loads(scraper.result[0][0])
