@@ -85,7 +85,7 @@ class AirQualityScraper:
         scraper.start()
 
         # 提取总页数和总页数到变量self._total_record和self._total_page
-        html_obj = BeautifulSoup(scraper.result[0], 'lxml')
+        html_obj = BeautifulSoup(scraper.result[0][0], 'lxml')
         mvalue = html_obj.select('.report_page')
         self._total_page = int(re.split('\<', re.split('总页数：', re.sub('\s+', '', str(mvalue[0])))[1])[0])
         self._total_record = int(re.split('条',re.split('总记录数：',re.sub('\s+','',str(mvalue[0])))[1])[0])
@@ -107,7 +107,7 @@ class AirQualityScraper:
 
         # 保存爬虫数据到results
         results = []
-        for page_data in scraper.result:
+        for page_data in scraper.result[0]:
             results.extend(page_data)
 
         # 打印结果

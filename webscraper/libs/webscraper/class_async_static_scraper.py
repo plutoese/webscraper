@@ -41,6 +41,7 @@ class AsyncStaticScraper():
 
     async def fetch_page(self, session, url, repeated=1000):
         try_time = 0
+        print('url: ',url)
         try:
             if self._using_proxy:
                 proxy = ProxyManager().random_proxy
@@ -65,7 +66,7 @@ class AsyncStaticScraper():
                 async with scrape_fun as response:
                     assert response.status == 200
                     result = await response.read()
-                    return self._processor(result)
+                    return self._processor(result), url
         except:
             try_time += 1
             print('Try again!!')
