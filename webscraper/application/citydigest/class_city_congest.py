@@ -143,7 +143,7 @@ class CityCongestionScraper:
                 else:
                     print('Already exists: ', record)
 
-    def scrape_city_district_hourly_congestion(self, citycode=None):
+    def scrape_city_district_realtime_congestion(self, citycode=None):
         url_fmt = 'http://report.amap.com/ajax/districtRank.do?linksType=1&cityCode={}'
         conn = MonCollection(CityCongestionScraper.mongo, 'scraperdata', 'citydistricthourlycongestionfromamap').collection
 
@@ -204,17 +204,37 @@ class CityCongestionScraper:
                 item.pop('coords')
                 print(item)
 
-                '''
-                date_time = datetime.datetime.now()
-                print(city, item['name'],item['index'],item['speed'])
-                record = {'datetime': date_time, '交通拥堵延时指数': item['index'], 'city': city, 'acode': city_code,
-                          '旅行速度': item['speed'], 'district': item['name']}
+    def getCityHighwayInfo(self,citycode='310000',period='insevendays'):
+        if period == 'realtime':
+            url_fmt = 'http://report.amap.com/ajax/roadRank.do?roadType=1&timeType=0&cityCode={}'
+        elif period == 'yesterday':
+            url_fmt = 'http://report.amap.com/ajax/roadRank.do?roadType=1&timeType=1&cityCode={}'
+        elif period == 'insevendays':
+            url_fmt = 'http://report.amap.com/ajax/roadRank.do?roadType=1&timeType=2&cityCode={}'
+        else:
+            print('Unknown Period')
+            raise Exception
+        conn = MonCollection(CityCongestionScraper.mongo, 'scraperdata', 'cityhighwayinfofromamap').collection
+
+        urls = []
+        urls.append(url_fmt.format(citycode))
+
+        scraper = AsyncStaticScraper(urls=urls, request_type='get', using_proxy=self._using_proxy)
+        scraper.start()
+
+        for result, url in scraper.result:
+            city = self._cities_dict[citycode]
+            result_data = json.loads(result)['tableData']
+            for item in result_data:
+                item.pop('coords')
+                record = {'dir': item['dir'], 'city': city, 'acode': citycode, 'name': item['name'],
+                          'rid': item['id'], 'length': item['length']}
                 found = conn.find_one(record)
                 if found is None:
                     print('insert...', len(record), record)
                     conn.insert_one(record)
                 else:
-                    print('Already exists: ', record)'''
+                    print('Already exists: ', record)
 
     def _get_cities(self):
         """ 辅助函数，返回城市列表
@@ -238,7 +258,8 @@ if __name__ == '__main__':
     start = time.time()
     congest_scraper = CityCongestionScraper(using_proxy=False)
     #congest_scraper.scrape_city_daily_congestion()
-    congest_scraper.scrape_city_highway_realtime_congestion()
+    #congest_scraper.scrape_city_highway_realtime_congestion()
+    congest_scraper.getCityHighwayInfo(period='realtime')
     #air_scraper.start_scrape()
     #print('Total: {}'.format(time.time() - start))
 
