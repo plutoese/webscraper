@@ -107,8 +107,8 @@ class AirQualityScraper:
 
         # 保存爬虫数据到results
         results = []
-        for page_data in scraper.result[0]:
-            results.extend(page_data)
+        for page in scraper.result:
+            results.extend(page[0])
 
         # 打印结果
         print('\n{}Result{}\nTotal Record: {}, Actually Scraped Record: {}!'.format('-'*20,'-'*20,self._total_record,len(results)))
@@ -131,17 +131,18 @@ class AirQualityScraper:
             item['OPER_DATE'] = datetime.datetime.strptime(item['OPER_DATE'],'%Y-%m-%d')
             found = cls.conn.find_one(item)
             if found is None:
-                print('insert...', len(item), item)
+                #print('insert...', len(item), item)
                 cls.conn.insert_one(item)
             else:
-                print('Already exists: ', item)
+                #print('Already exists: ', item)
+                pass
         return page_data
 
 
 if __name__ == '__main__':
 
     start = time.time()
-    air_scraper = AirQualityScraper(using_proxy=True)
+    air_scraper = AirQualityScraper(start_date='2017-12-17',using_proxy=False)
     air_scraper.init()
     air_scraper.start_scrape()
     print('Total: {}'.format(time.time() - start))
