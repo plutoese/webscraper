@@ -177,32 +177,40 @@ class CityCongestionScraper:
                 else:
                     print('Already exists: ', record)
 
-    def scrape_city_highway_realtime_congestion(self, citycode='310000'):
-        url_fmt = 'http://report.amap.com/ajax/roadRank.do?roadType=1&timeType=0&cityCode={}'
-        conn = MonCollection(CityCongestionScraper.mongo, 'scraperdata', 'cityrealtimehighwaycongestionfromamap').collection
-
-        # 处理城市代码
-        if citycode is None:
-            citycode = [item['code'] for item in self._cities]
+    def scrape_city_highway_realtime_congestion(self, citycode='310000', period='day'):
+        var_name = '交通拥堵延时指数'
+        if period == 'day':
+            url_fmt = 'http://report.amap.com/ajax/roadDetail.do?roadType=1&timeType=1&cityCode={}&lineCode={}'
+            conn = MonCollection(CityCongestionScraper.mongo, 'scraperdata',
+                                 'cityhighwaycongestioninadayfromamap').collection
         else:
-            if isinstance(citycode, (int, str)):
-                citycode = [str(citycode)]
+            url_fmt = 'http://report.amap.com/ajax/roadDetail.do?roadType=1&timeType=2&cityCode={}&lineCode={}'
+            conn = MonCollection(CityCongestionScraper.mongo, 'scraperdata',
+                                 'cityhighwaycongestioninaweekfromamap').collection
 
+        highway_info_conn = MonCollection(CityCongestionScraper.mongo, 'scraperdata', 'cityhighwayinfofromamap').collection
+
+        # 处理urls
         urls = []
-        for city_code in citycode:
-            urls.append(url_fmt.format(city_code))
+        for record in highway_info_conn.find({'acode':citycode},projection={'_id':False,'rid':True}):
+            urls.append(url_fmt.format(citycode,record['rid']))
 
         scraper = AsyncStaticScraper(urls=urls, request_type='get', using_proxy=self._using_proxy)
         scraper.start()
 
         for result, url in scraper.result:
-            city_code = re.split('\&', re.split('cityCode=', url)[1])[0]
-            city = self._cities_dict[city_code]
+            rid = re.split('lineCode=', url)[1]
+            city = self._cities_dict[citycode]
             result_data = json.loads(result)
-            print(type(result_data['updateTime']),result_data['updateTime'])
-            for item in result_data['tableData']:
-                item.pop('coords')
-                print(item)
+            for item in result_data:
+                date_time = datetime.datetime.fromtimestamp(int(item[0] / 1000))
+                record = {'datetime':date_time, 'value':item[1], 'city':city, 'acode':citycode, 'name':var_name, 'rid':rid}
+                found = conn.find_one(record)
+                if found is None:
+                    print('insert...', len(record), record)
+                    conn.insert_one(record)
+                else:
+                    print('Already exists: ', record)
 
     def getCityHighwayInfo(self,citycode='310000',period='insevendays'):
         if period == 'realtime':

@@ -13,7 +13,7 @@ from libs.database.class_mongodb import MongoDB, MonCollection
 
 # 0. 填写数据库与集合名称
 database_name = 'scraperdata'
-collection_name = 'citydistricthourlycongestionfromamap'
+collection_name = 'cityhighwaycongestioninaweekfromamap'
 # 索引格式：[("mike", pymongo.ASCENDING),("eliot", pymongo.DESCENDING)]
 index_to_be_created = [[("datetime", pymongo.ASCENDING)],[("acode", pymongo.ASCENDING)],
                        [("datetime", pymongo.ASCENDING),("acode",pymongo.ASCENDING)],
