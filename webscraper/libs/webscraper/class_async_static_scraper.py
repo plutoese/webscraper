@@ -68,7 +68,7 @@ class AsyncStaticScraper():
                 async with scrape_fun as response:
                     print('twohere')
                     print(response.status)
-                    #assert response.status == 200
+                    assert response.status == 200
                     print('threehere')
                     if self._response_type == 'json':
                         result = await response.json()

@@ -108,8 +108,9 @@ class CityCongestionScraper:
                     else:
                         print('Already exists: ', record)
 
-            print('Let us take a break!.....times.{}'.format(str(i + 1)))
-            time.sleep(random.randint(5, 80))
+            break_time = random.randint(5, 80)
+            print('Let us take a break!.....times.{}'.format(str(break_time)))
+            time.sleep(break_time)
 
     def scrape_city_hourly_congestion(self, citycode=None):
         """ 爬取每小时的城市交通拥堵延时指数
@@ -154,8 +155,9 @@ class CityCongestionScraper:
                     else:
                         print('Already exists: ', record)
 
-            print('Let us take a break!.....times.{}'.format(str(i + 1)))
-            time.sleep(random.randint(5, 80))
+            break_time = random.randint(5, 80)
+            print('Let us take a break!.....times.{}'.format(str(break_time)))
+            time.sleep(break_time)
 
     def scrape_city_district_realtime_congestion(self, citycode=None):
         url_fmt = 'http://report.amap.com/ajax/districtRank.do?linksType=1&cityCode={}'
