@@ -85,7 +85,7 @@ class CityCongestionScraper:
                 urls.append(url_template.format(citycode=city,year=myear,quarter=mquarter))
 
         # 爬取数据
-        scraper = AsyncStaticScraper(urls=urls, request_type='get', using_proxy=self._using_proxy)
+        scraper = AsyncStaticScraper(urls=urls, request_type='get', response_type='text', using_proxy=self._using_proxy)
         scraper.start()
 
         # 把爬虫得到的数据进行解析，然后存入数据库

@@ -46,7 +46,7 @@ class AsyncStaticScraper():
         try:
             if self._using_proxy:
                 proxy = ProxyManager().random_proxy
-                print('Proxy :{}'.format(proxy))
+                print('Using Proxy: ',proxy)
                 if isinstance(url, (tuple,list)):
                     if self._request_type == 'get':
                         scrape_fun = session.get(url[0], proxy=proxy, params=url[1])
@@ -64,6 +64,7 @@ class AsyncStaticScraper():
                     scrape_fun = session.get(url)
 
             with aiohttp.Timeout(10):
+                print('Iamhere...')
                 async with scrape_fun as response:
                     assert response.status == 200
                     if self._response_type == 'json':
@@ -84,7 +85,7 @@ class AsyncStaticScraper():
 
     def start(self):
         event_loop = asyncio.get_event_loop()
-        with aiohttp.ClientSession(loop=event_loop) as session:
+        with aiohttp.ClientSession(loop=event_loop,connector=aiohttp.TCPConnector(limit=20)) as session:
             tasks = [asyncio.ensure_future(self.fetch_page(session, url)) for url in self._urls]
             self._result = event_loop.run_until_complete(asyncio.gather(*tasks))
 

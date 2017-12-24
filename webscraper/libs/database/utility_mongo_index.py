@@ -12,12 +12,14 @@ import pymongo
 from libs.database.class_mongodb import MongoDB, MonCollection
 
 # 0. 填写数据库与集合名称
-database_name = 'scraperdata'
-collection_name = 'cityhighwaycongestioninaweekfromamap'
+database_name = 'cache'
+collection_name = 'gaokaorecord'
 # 索引格式：[("mike", pymongo.ASCENDING),("eliot", pymongo.DESCENDING)]
-index_to_be_created = [[("datetime", pymongo.ASCENDING)],[("acode", pymongo.ASCENDING)],
-                       [("datetime", pymongo.ASCENDING),("acode",pymongo.ASCENDING)],
-                       [("acode", pymongo.ASCENDING), ("datetime", pymongo.ASCENDING)]]
+index_to_be_created = [[("url", pymongo.ASCENDING)]]
+'''
+index_to_be_created = [[("学校", pymongo.ASCENDING)],[("年份", pymongo.ASCENDING)],
+                       [("年份", pymongo.ASCENDING),("学校",pymongo.ASCENDING)],
+                       [("学校", pymongo.ASCENDING), ("年份", pymongo.ASCENDING)]]'''
 
 # 连接数据库
 mongo = MongoDB()

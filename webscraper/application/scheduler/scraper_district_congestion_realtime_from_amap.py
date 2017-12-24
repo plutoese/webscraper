@@ -16,14 +16,15 @@ from application.citydigest.class_city_congest import CityCongestionScraper
 # 0. 参数设定
 # 计时器
 start = time.time()
-using_proxy = True
+using_proxy = False
 
 
 # 爬取数据
-congest_scraper = CityCongestionScraper(using_proxy=True)
+congest_scraper = CityCongestionScraper(using_proxy=using_proxy)
 congest_scraper.scrape_city_district_realtime_congestion(citycode=None)
 
 # 输出基本信息
 print('Hourly City Congestion scraper date: ',datetime.now())
 print('Total: {}'.format(time.time() - start))
 print('-'*50)
+

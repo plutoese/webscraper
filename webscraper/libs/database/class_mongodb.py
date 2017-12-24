@@ -45,7 +45,7 @@ class MongoDB:
     :param str conn_str: 数据库连接字符串，例如'mongodb://plutoese:z1Yh29@139.196.189.191:3717/'
     :return: 无返回值
     """
-    def __init__(self, host='localhost', port=27017, conn_str='mongodb://mongouser:z1Yh2900@123.207.185.126:27017/'):
+    def __init__(self, host='localhost', port=27017, conn_str='mongodb://root:z1Yh2900@dds-bp162bb74b8184e41658-pub.mongodb.rds.aliyuncs.com:3717'):
         # Client for a MongoDB instance
         # The clent object is thread-safe and has connection-pooling built in.
         if conn_str is not None:

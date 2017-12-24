@@ -20,7 +20,7 @@ using_proxy = True
 
 
 # 爬取数据
-congest_scraper = CityCongestionScraper(using_proxy=True)
+congest_scraper = CityCongestionScraper(using_proxy=using_proxy)
 congest_scraper.scrape_city_daily_congestion(citycode=None, year=2017, quarter=4)
 
 # 输出基本信息

@@ -4,7 +4,6 @@
 =========================================
 空气质量日报爬虫
 =========================================
-
 :Author: glen
 :Date: 2017.12.17
 :Tags: asyncio scraper
@@ -18,11 +17,9 @@ AirQualityScraper
 **使用方法**
 ==================
 
-
 **示范代码**
 ==================
 ::
-
 """
 
 import pymongo
@@ -43,7 +40,6 @@ class AirQualityScraper:
 
     def __init__(self, start_date=None, end_date=None, xmlname='1462259560614', using_proxy=False):
         """ 初始化空气质量爬虫
-
         :param str start_date: 起始日期
         :param str end_date: 终止日期
         :param xmlname: 网站所需参数
@@ -77,7 +73,6 @@ class AirQualityScraper:
 
     def init(self):
         """ 启动爬虫前的初始化工作，主要提取记录总数和页面总数
-
         :return: 无返回值
         """
         # 启动爬虫，爬取基础网页
@@ -98,7 +93,6 @@ class AirQualityScraper:
 
     def start_scrape(self):
         """ 启动爬虫进行爬取
-
         :return: 无返回值
         """
         # 启动爬虫
@@ -119,7 +113,6 @@ class AirQualityScraper:
     @classmethod
     def parse(cls,request_data):
         """ 处理爬虫获取的网页数据
-
         :param request_data: 爬取的原始数据
         :return: 返回处理过的数据
         """
@@ -131,18 +124,17 @@ class AirQualityScraper:
             item['OPER_DATE'] = datetime.datetime.strptime(item['OPER_DATE'],'%Y-%m-%d')
             found = cls.conn.find_one(item)
             if found is None:
-                #print('insert...', len(item), item)
+                print('insert...', len(item), item)
                 cls.conn.insert_one(item)
             else:
-                #print('Already exists: ', item)
-                pass
+                print('Already exists: ', item)
         return page_data
 
 
 if __name__ == '__main__':
 
     start = time.time()
-    air_scraper = AirQualityScraper(start_date='2017-12-17',using_proxy=False)
+    air_scraper = AirQualityScraper(end_date='2017-12-22',using_proxy=False)
     air_scraper.init()
     air_scraper.start_scrape()
     print('Total: {}'.format(time.time() - start))
@@ -154,6 +146,3 @@ if __name__ == '__main__':
     print(sorted(conn.find().distinct('OPER_DATE')))
     #conn.create_index([("OPER_DATE", pymongo.ASCENDING)])
     #conn.create_index([("OPER_DATE", pymongo.ASCENDING),("CITYCODE", pymongo.ASCENDING)])'''
-
-
-

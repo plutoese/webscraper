@@ -20,7 +20,7 @@ using_proxy = True
 
 
 # 爬取数据
-congest_scraper = CityCongestionScraper(using_proxy=False)
+congest_scraper = CityCongestionScraper(using_proxy=using_proxy)
 congest_scraper.getCityHighwayInfo(period='realtime')
 
 # 输出基本信息

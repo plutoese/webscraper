@@ -24,7 +24,7 @@ ProxyManager
 
 import random
 from pymongo import DESCENDING, ASCENDING
-from libs.database.class_mongodb import MonCollection
+from libs.database.class_mongodb import MongoDB, MonCollection
 
 
 class Proxy:
@@ -58,10 +58,9 @@ class ProxyManager:
     :param str proxy_web: proxy的地址，默认为http://www.youdaili.net/Daili/guonei/
     :return: 无返回值
     """
-    def __init__(self, mongodb='mongodb://mongouser:z1Yh2900@123.207.185.126:27017/',
-                 database='proxy', collection_name='proxys'):
+    def __init__(self, database='proxy', collection_name='proxys'):
         # 设置数据库
-        self._conn = MonCollection(mongodb=mongodb, database=database, collection_name=collection_name)
+        self._conn = MonCollection(mongodb=MongoDB(), database=database, collection_name=collection_name)
 
     def find(self, type=0, limit=None):
         if type == 0:
@@ -80,15 +79,15 @@ class ProxyManager:
 
         :return: 随机返回一个代理服务器
         """
-        return random.choice(list(self.find(limit=40)))
+        return random.choice(list(self.find(limit=100)))
 
     @property
-    def top_50_proxies(self):
+    def top_150_proxies(self):
         """ 随机返回一个代理服务器，选择的权重是它的count
 
         :return: 随机返回一个代理服务器
         """
-        return list(self.find(limit=50))
+        return list(self.find(limit=150))
 
 if __name__ == '__main__':
     pmanager = ProxyManager()
