@@ -66,13 +66,16 @@ class AsyncStaticScraper():
             with aiohttp.Timeout(10):
                 print('Iamhere...')
                 async with scrape_fun as response:
+                    print('twohere')
                     assert response.status == 200
+                    print('threehere')
                     if self._response_type == 'json':
                         result = await response.json()
                     elif self._response_type == 'text':
                         result = await response.text()
                     else:
                         result = await response.read()
+                    print('fourhere')
                     return self._processor(result), url
         except Exception as e:
             try_time += 1
