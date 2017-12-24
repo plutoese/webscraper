@@ -32,6 +32,7 @@ import arrow
 import copy
 import re
 import json
+import random
 from bs4 import BeautifulSoup
 from itertools import product
 from collections import deque
@@ -107,6 +108,9 @@ class CityCongestionScraper:
                     else:
                         print('Already exists: ', record)
 
+            print('Let us take a break!.....times.{}'.format(str(i + 1)))
+            time.sleep(random.randint(5, 80))
+
     def scrape_city_hourly_congestion(self, citycode=None):
         """ 爬取每小时的城市交通拥堵延时指数
 
@@ -150,6 +154,9 @@ class CityCongestionScraper:
                     else:
                         print('Already exists: ', record)
 
+            print('Let us take a break!.....times.{}'.format(str(i + 1)))
+            time.sleep(random.randint(5, 80))
+
     def scrape_city_district_realtime_congestion(self, citycode=None):
         url_fmt = 'http://report.amap.com/ajax/districtRank.do?linksType=1&cityCode={}'
         conn = MonCollection(CityCongestionScraper.mongo, 'scraperdata', 'citydistricthourlycongestionfromamap').collection
@@ -187,6 +194,9 @@ class CityCongestionScraper:
                         conn.insert_one(record)
                     else:
                         print('Already exists: ', record)
+
+            print('Let us take a break!.....times.{}'.format(str(i + 1)))
+            time.sleep(random.randint(5, 80))
 
     def scrape_city_highway_realtime_congestion(self, citycode='310000', period='day'):
         var_name = '交通拥堵延时指数'
