@@ -194,8 +194,9 @@ class CityCongestionScraper:
                     else:
                         print('Already exists: ', record)
 
-            print('Let us take a break!.....times.{}'.format(str(i + 1)))
-            time.sleep(random.randint(5, 80))
+            break_time = random.randint(5, 80)
+            print('Let us take a break!.....times.{}'.format(str(break_time)))
+            time.sleep(break_time)
 
     def scrape_city_highway_realtime_congestion(self, citycode='310000', period='day'):
         var_name = '交通拥堵延时指数'
