@@ -279,7 +279,7 @@ class CityCongestionScraper:
         return json.loads(scraper.result[0][0])
 
     @classmethod
-    def split(cls, urls, limit=10):
+    def split(cls, urls, limit=5):
         urls_deque = deque(urls)
 
         split_urls = []
