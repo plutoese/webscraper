@@ -103,10 +103,11 @@ class CityCongestionScraper:
                     record = {'city':city, 'acode':city_code, 'date':date, 'value':value, 'name':var_name}
                     found = conn.find_one(record)
                     if found is None:
-                        print('insert...', len(record), record)
+                        #print('insert...', len(record), record)
                         conn.insert_one(record)
                     else:
-                        print('Already exists: ', record)
+                        #print('Already exists: ', record)
+                        pass
 
             print('Let us take a break!.....times.{}'.format(str(i + 1)))
             time.sleep(random.randint(5, 80))
@@ -149,10 +150,11 @@ class CityCongestionScraper:
                     record = {'datetime':date_time, 'value':item[1], 'city':city, 'acode':city_code, 'name':var_name}
                     found = conn.find_one(record)
                     if found is None:
-                        print('insert...', len(record), record)
+                        #print('insert...', len(record), record)
                         conn.insert_one(record)
                     else:
-                        print('Already exists: ', record)
+                        #print('Already exists: ', record)
+                        pass
 
             print('Let us take a break!.....times.{}'.format(str(i + 1)))
             time.sleep(random.randint(5, 80))
@@ -175,7 +177,6 @@ class CityCongestionScraper:
         urls_list = CityCongestionScraper.split(urls=urls)
 
         for to_urls in urls_list:
-
             scraper = AsyncStaticScraper(urls=to_urls, request_type='get', using_proxy=self._using_proxy)
             scraper.start()
 
@@ -190,10 +191,11 @@ class CityCongestionScraper:
                               '旅行速度': item['speed'], 'district': item['name']}
                     found = conn.find_one(record)
                     if found is None:
-                        print('insert...', len(record), record)
+                        #print('insert...', len(record), record)
                         conn.insert_one(record)
                     else:
-                        print('Already exists: ', record)
+                        #print('Already exists: ', record)
+                        pass
 
             print('Let us take a break!.....times.{}'.format(str(i + 1)))
             time.sleep(random.randint(5, 80))
