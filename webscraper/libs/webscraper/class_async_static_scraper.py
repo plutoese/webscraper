@@ -44,25 +44,26 @@ class AsyncStaticScraper():
     async def fetch_page(self, session, url, repeated=1000):
         try_time = 0
         print('url: ',url)
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36'}
         try:
             if self._using_proxy:
                 proxy = ProxyManager().random_proxy
                 print('Using Proxy: ',proxy)
                 if isinstance(url, (tuple,list)):
                     if self._request_type == 'get':
-                        scrape_fun = session.get(url[0], proxy=proxy, params=url[1])
+                        scrape_fun = session.get(url[0], proxy=proxy, params=url[1], headers=headers)
                     else:
-                        scrape_fun = session.post(url[0], data=url[1], proxy=proxy)
+                        scrape_fun = session.post(url[0], data=url[1], proxy=proxy, headers=headers)
                 else:
-                    scrape_fun = session.get(url, proxy=proxy)
+                    scrape_fun = session.get(url, proxy=proxy, headers=headers)
             else:
                 if isinstance(url, (tuple, list)):
                     if self._request_type == 'get':
-                        scrape_fun = session.get(url[0], params=url[1])
+                        scrape_fun = session.get(url[0], params=url[1], headers=headers)
                     else:
-                        scrape_fun = session.post(url[0], data=url[1])
+                        scrape_fun = session.post(url[0], data=url[1], headers=headers)
                 else:
-                    scrape_fun = session.get(url)
+                    scrape_fun = session.get(url, headers=headers)
 
             with aiohttp.Timeout(10):
                 print('Iamhere...')
@@ -82,7 +83,7 @@ class AsyncStaticScraper():
         except Exception as e:
             try_time += 1
             print('Try again!!...Meet exception {}'.format(e))
-            time.sleep(random.randint(1, 10))
+            #time.sleep(random.randint(1, 5))
             if try_time <= repeated:
                 return await self.fetch_page(session, url)
             else:
