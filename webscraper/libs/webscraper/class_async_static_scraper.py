@@ -74,9 +74,9 @@ class AsyncStaticScraper():
                     else:
                         result = await response.read()
                     return self._processor(result), url
-        except:
+        except Exception as e:
             try_time += 1
-            print('Try again!!')
+            print('Try again!!...Meet exception {}'.format(e))
             if try_time <= repeated:
                 return await self.fetch_page(session, url)
             else:
