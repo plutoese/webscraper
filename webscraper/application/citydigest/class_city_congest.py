@@ -34,7 +34,7 @@ import re
 import json
 from bs4 import BeautifulSoup
 from itertools import product
-from collections import OrderedDict
+from collections import deque
 from libs.database.class_mongodb import MongoDB, MonCollection
 from libs.webscraper.class_async_static_scraper import AsyncStaticScraper
 
@@ -84,25 +84,28 @@ class CityCongestionScraper:
             for myear,mquarter in product([str(y) for y in year],[str(q) for q in quarter]):
                 urls.append(url_template.format(citycode=city,year=myear,quarter=mquarter))
 
-        # 爬取数据
-        scraper = AsyncStaticScraper(urls=urls, request_type='get', response_type='text', using_proxy=self._using_proxy)
-        scraper.start()
+        urls_list = CityCongestionScraper.split(urls=urls)
 
-        # 把爬虫得到的数据进行解析，然后存入数据库
-        for result, url in scraper.result:
-            city_code = re.split('\&',re.split('cityCode=',url)[1])[0]
-            city = self._cities_dict[city_code]
-            result_data = json.loads(result)
-            for i in range(len(result_data['categories'])):
-                date = datetime.datetime.strptime(result_data['categories'][i],'%Y-%m-%d')
-                value = result_data['serieData'][i]
-                record = {'city':city, 'acode':city_code, 'date':date, 'value':value, 'name':var_name}
-                found = conn.find_one(record)
-                if found is None:
-                    print('insert...', len(record), record)
-                    conn.insert_one(record)
-                else:
-                    print('Already exists: ', record)
+        for to_urls in urls_list:
+            # 爬取数据
+            scraper = AsyncStaticScraper(urls=to_urls, request_type='get', response_type='text', using_proxy=self._using_proxy)
+            scraper.start()
+
+            # 把爬虫得到的数据进行解析，然后存入数据库
+            for result, url in scraper.result:
+                city_code = re.split('\&',re.split('cityCode=',url)[1])[0]
+                city = self._cities_dict[city_code]
+                result_data = json.loads(result)
+                for i in range(len(result_data['categories'])):
+                    date = datetime.datetime.strptime(result_data['categories'][i],'%Y-%m-%d')
+                    value = result_data['serieData'][i]
+                    record = {'city':city, 'acode':city_code, 'date':date, 'value':value, 'name':var_name}
+                    found = conn.find_one(record)
+                    if found is None:
+                        print('insert...', len(record), record)
+                        conn.insert_one(record)
+                    else:
+                        print('Already exists: ', record)
 
     def scrape_city_hourly_congestion(self, citycode=None):
         """ 爬取每小时的城市交通拥堵延时指数
@@ -126,22 +129,26 @@ class CityCongestionScraper:
         for city_code in citycode:
             urls.append(url_fmt.format(city_code))
 
-        scraper = AsyncStaticScraper(urls=urls, request_type='get', using_proxy=self._using_proxy)
-        scraper.start()
+        urls_list = CityCongestionScraper.split(urls=urls)
 
-        for result, url in scraper.result:
-            city_code = re.split('\&', re.split('cityCode=', url)[1])[0]
-            city = self._cities_dict[city_code]
-            result_data = json.loads(result)
-            for item in result_data:
-                date_time = datetime.datetime.fromtimestamp(int(item[0]/1000))
-                record = {'datetime':date_time, 'value':item[1], 'city':city, 'acode':city_code, 'name':var_name}
-                found = conn.find_one(record)
-                if found is None:
-                    print('insert...', len(record), record)
-                    conn.insert_one(record)
-                else:
-                    print('Already exists: ', record)
+        for to_urls in urls_list:
+
+            scraper = AsyncStaticScraper(urls=to_urls, request_type='get', using_proxy=self._using_proxy)
+            scraper.start()
+
+            for result, url in scraper.result:
+                city_code = re.split('\&', re.split('cityCode=', url)[1])[0]
+                city = self._cities_dict[city_code]
+                result_data = json.loads(result)
+                for item in result_data:
+                    date_time = datetime.datetime.fromtimestamp(int(item[0]/1000))
+                    record = {'datetime':date_time, 'value':item[1], 'city':city, 'acode':city_code, 'name':var_name}
+                    found = conn.find_one(record)
+                    if found is None:
+                        print('insert...', len(record), record)
+                        conn.insert_one(record)
+                    else:
+                        print('Already exists: ', record)
 
     def scrape_city_district_realtime_congestion(self, citycode=None):
         url_fmt = 'http://report.amap.com/ajax/districtRank.do?linksType=1&cityCode={}'
@@ -158,24 +165,28 @@ class CityCongestionScraper:
         for city_code in citycode:
             urls.append(url_fmt.format(city_code))
 
-        scraper = AsyncStaticScraper(urls=urls, request_type='get', using_proxy=self._using_proxy)
-        scraper.start()
+        urls_list = CityCongestionScraper.split(urls=urls)
 
-        for result, url in scraper.result:
-            city_code = re.split('\&', re.split('cityCode=', url)[1])[0]
-            city = self._cities_dict[city_code]
-            result_data = json.loads(result)
-            for item in result_data:
-                date_time = datetime.datetime.now()
-                print(city, item['name'],item['index'],item['speed'])
-                record = {'datetime': date_time, '交通拥堵延时指数': item['index'], 'city': city, 'acode': city_code,
-                          '旅行速度': item['speed'], 'district': item['name']}
-                found = conn.find_one(record)
-                if found is None:
-                    print('insert...', len(record), record)
-                    conn.insert_one(record)
-                else:
-                    print('Already exists: ', record)
+        for to_urls in urls_list:
+
+            scraper = AsyncStaticScraper(urls=to_urls, request_type='get', using_proxy=self._using_proxy)
+            scraper.start()
+
+            for result, url in scraper.result:
+                city_code = re.split('\&', re.split('cityCode=', url)[1])[0]
+                city = self._cities_dict[city_code]
+                result_data = json.loads(result)
+                for item in result_data:
+                    date_time = datetime.datetime.now()
+                    print(city, item['name'],item['index'],item['speed'])
+                    record = {'datetime': date_time, '交通拥堵延时指数': item['index'], 'city': city, 'acode': city_code,
+                              '旅行速度': item['speed'], 'district': item['name']}
+                    found = conn.find_one(record)
+                    if found is None:
+                        print('insert...', len(record), record)
+                        conn.insert_one(record)
+                    else:
+                        print('Already exists: ', record)
 
     def scrape_city_highway_realtime_congestion(self, citycode='310000', period='day'):
         var_name = '交通拥堵延时指数'
@@ -254,6 +265,19 @@ class CityCongestionScraper:
         scraper.start()
 
         return json.loads(scraper.result[0][0])
+
+    @classmethod
+    def split(cls, urls, limit=10):
+        urls_deque = deque(urls)
+
+        split_urls = []
+        while len(urls_deque) > 0:
+            if len(urls_deque) >= limit:
+                split_urls.append([urls_deque.popleft() for i in range(limit)])
+            else:
+                split_urls.append([urls_deque.popleft() for i in range(len(urls_deque))])
+
+        return split_urls
 
     @classmethod
     def city_code(self):

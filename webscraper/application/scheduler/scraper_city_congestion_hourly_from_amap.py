@@ -16,7 +16,7 @@ from application.citydigest.class_city_congest import CityCongestionScraper
 # 0. 参数设定
 # 计时器
 start = time.time()
-using_proxy = False
+using_proxy = True
 
 
 # 爬取数据
